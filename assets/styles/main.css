@@ -28,3 +28,9 @@ html, body {
     top: 0px;
     left: 0px;
 }
+
+.sprite {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+}
