@@ -1,4 +1,4 @@
-import { Sprite, Vector2 } from "./engine.js";
+import { Spring, Sprite, Vector2 } from "./engine.js";
 
 export class Crosshair extends Sprite {
     constructor(size) {
@@ -12,9 +12,16 @@ export class Crosshair extends Sprite {
 
 export class Shotgun extends Sprite {
     constructor(width) {
-        super("assets/images/shotgun.png", new Vector2(0, 0), new Vector2(width, width / 391 * 458), 2);
+        super("assets/images/shotgun.png", new Vector2(0, 0), new Vector2(width, width / 162 * 295), 2);
+        this.anchorPoint = new Vector2(0.5, 1.5);
         this.mousePos = new Vector2(0, 0);
         this.shootAudio = new Audio("assets/audio/shoot.wav");
+        this.spring = new Spring();
+        this.spring.setDamper(0.65);
+        this.spring.setSpeed(12);
+        this.spring.setTarget(0);
+
+        this.element.style.backgroundColor = "#fff";
     }
 
     update(dt, mousePos) {
@@ -24,6 +31,7 @@ export class Shotgun extends Sprite {
 
     onMouseClick(mousePos) {
         console.log(`Shotgun shot at X: ${mousePos.x} Y: ${mousePos.y}`)
+        this.spring.impulse(3);
         this.shootAudio.pause();
         this.shootAudio.currentTime = 0;
         this.shootAudio.play();
@@ -33,22 +41,29 @@ export class Shotgun extends Sprite {
         const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
         const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
         
+        const mouseXPerc = this.mousePos.x / vw;
+        const mouseYPerc = this.mousePos.y / vh;
+        const mult = mouseYPerc > 0.35 ? mouseYPerc - 0.35 : 0;
+
+        console.log(this.spring.getPosition());
+
         this.position = new Vector2(
-            (this.mousePos.x * 0.5)+ (vw * 0.25),
-            vh - (this.size.y / 3)
+            (vw * 0.5) + (0.5 * mouseXPerc - 0.25) * vw,
+            // vh * 0.5
+            (vh * 1.3) + (0.35 * mult) * vh
         )
-        this.flipX = this.mousePos.x >= this.position.x;
+
+        this.spriteOffset = new Vector2(
+            0,
+            this.spring.getPosition()
+        )
 
         const deltaX = this.mousePos.x - this.position.x;
-        const deltaY = Math.min(this.mousePos.y, this.position.y - 1) - this.position.y;
+        const deltaY = this.mousePos.y - this.position.y;
         let angle = Math.atan2(deltaY, deltaX);
         angle += (Math.PI / 2);
-        angle *= 0.75
 
-        this.rotation = (this.flipX ? -0.125 : 0.125) + angle;
-        // this.rotation = (this.flipX ? -0.125 : 0.125) + (
-        //     Math.atan2(this.mousePos.y - this.position.y, this.mousePos.x - this.position.x) // + (Math.PI / 2)
-        // ) * 0.75;
+        this.rotation = angle;
         super.render(dt);
     }
 }
