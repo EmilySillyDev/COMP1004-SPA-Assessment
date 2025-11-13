@@ -45,7 +45,7 @@ export class Shotgun extends Sprite {
         const mouseYPerc = this.mousePos.y / vh;
         const mult = mouseYPerc > 0.35 ? mouseYPerc - 0.35 : 0;
 
-        console.log(this.spring.getPosition());
+        // console.log(this.spring.getPosition());
 
         this.position = new Vector2(
             (vw * 0.5) + (0.5 * mouseXPerc - 0.25) * vw,

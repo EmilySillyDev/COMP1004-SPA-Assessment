@@ -175,6 +175,7 @@ export class Sprite {
         this.rotation = 0;
         this.flipX = false;
         this.flipY = false;
+        this.zindex = zindex
 
         this.anchorPoint = new Vector2(0.5, 0.5);
         this.spriteOffset = new Vector2;
@@ -183,7 +184,6 @@ export class Sprite {
         this.element = new Image(size.x, size.y);
         this.element.src = this.imagePath;
         this.element.classList.add("sprite");
-        this.element.style.zIndex = zindex;
     }
 
     isASprite() { return true; }
@@ -252,12 +252,18 @@ export class Game {
                 }
             })
 
-            this.renderer.render()
         }, 1);
+
+        this.renderer.render(performance.now())
     }
 
     addElement(element) {
         this.gameObjects.push(element);
+
+        this.gameObjects.sort((a, b) => {
+            return a.zindex - b.zindex;
+        })
+
         element.addToBody();
     }
 

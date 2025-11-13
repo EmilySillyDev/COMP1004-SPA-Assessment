@@ -1,18 +1,22 @@
 export class Render {
     constructor(game) {
         this.game = game
-        this.lastRender = Date.now();
+        this.lastRender = undefined;
        
         this.canvas = document.createElement("canvas");
         this.canvas.classList.add("render-canvas");
         document.body.appendChild(this.canvas); 
     }
 
-    render() {
+    render(now) {
         const ctx = this.canvas.getContext('2d');
-        const now = Date.now();
+
+        if (this.lastRender === undefined) {
+            this.lastRender = now;
+        }
+
         const dt = now - this.lastRender;
-        this.lastRender = now;
+
         ctx.canvas.width  = window.innerWidth;
         ctx.canvas.height = window.innerHeight;
         // ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -66,6 +70,9 @@ export class Render {
 
             ctx.setTransform(1,0,0,1,0,0);
         });
+
+        this.lastRender = now;
+        requestAnimationFrame((s) => this.render(s), this.canvas);
     }
 
 
