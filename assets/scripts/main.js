@@ -8,14 +8,13 @@ const game = new Game(false);
 game.addElement(new Sprite(
     "/assets/images/hills.png",
     new Vector2(960, 540),
-    new Vector2(1920, 1080),
+    new Vector2(1920 * 1.1, 1080 * 1.1),
     -1
 ));
 
 game.addElement(new Shotgun(256));
 game.addElement(new Crosshair(96));
-game.addElement(new Cat(new Vector2(0, 0), 256))
-
+    
 game.start();
 
 setInterval(function() {

@@ -28,6 +28,7 @@ export class Shotgun extends Sprite {
 
         this.element.style.backgroundColor = "#fff";
         this.curShot = 0;
+        this.lastShot = 0;
     }
 
     update(dt, mousePos) {
@@ -36,9 +37,16 @@ export class Shotgun extends Sprite {
     }
 
     onMouseClick(mousePos) {
+        const now = Date.now();
+        if (now - this.lastShot < 200) { return; }
+
         console.log(`Shotgun shot at X: ${mousePos.x} Y: ${mousePos.y}`)
+        
         this.curShot += 1;
+        this.lastShot = now;
         this.spring.impulse(8);
+        this.game.renderer.zoomSpring.impulse(2);
+
         const aud = this.curShot % 2 == 0 ? this.shootAudio2 : this.shootAudio
         aud.pause();
         aud.currentTime = 0;

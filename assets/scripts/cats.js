@@ -41,6 +41,18 @@ export class Cat extends PhysicsSprite {
         this.destroy();
     }
 
+    escaped() {
+        if (!this.alive) return;
+        this.destroy();
+    }
+
+    update(dt) {
+        super.update(dt);
+        if (this.position.y > (1080 + this.size.y)) {
+            this.escaped()
+        }
+    }
+
     render(dt) {
         super.render(dt);
     }
