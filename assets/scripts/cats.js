@@ -1,4 +1,4 @@
-import { PhysicsSprite } from "./engine.js";
+import { PhysicsSprite } from "./sprite.js";
 import { Vector2, getRandomInt } from "./math.js";
 
 

@@ -1,4 +1,4 @@
-import { Sprite } from "./engine.js";
+import { Sprite } from "./sprite.js";
 import { Vector2, Spring } from "./math.js";
 
 export class Crosshair extends Sprite {
@@ -42,6 +42,12 @@ export class Shotgun extends Sprite {
 
         console.log(`Shotgun shot at X: ${mousePos.x} Y: ${mousePos.y}`)
         
+        const targets = this.game.getTargetsAtPosition(mousePos);
+
+        targets.forEach(element => {
+            element.kill();
+        });
+
         this.curShot += 1;
         this.lastShot = now;
         this.spring.impulse(8);

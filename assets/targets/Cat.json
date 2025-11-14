@@ -1,6 +1,9 @@
 {
     "name": "Cat",
     "type": "Physics",
+    
+    "sizeX": 256,
+    "sizeY": 256,
 
     "assets": [
         "images/cats/cat1.png",

@@ -1,64 +1,7 @@
 import { Render } from "./render.js";
 import { Vector2 } from "./math.js";
 import { Level } from "./level.js";
-
-export class Sprite { 
-    constructor(path, position, size, zindex) {
-        this.imagePath = path;
-        this.destroying = false;
-        
-        this.position = position || new Vector2(32, 32);
-        this.size = size || new Vector2(32, 32);
-        this.rotation = 0;
-        this.flipX = false;
-        this.flipY = false;
-        this.zindex = zindex
-
-        this.anchorPoint = new Vector2(0.5, 0.5);
-        this.spriteOffset = new Vector2;
-        this.visible = true;
-
-        this.element = new Image(size.x, size.y);
-        this.element.src = this.imagePath;
-        this.element.classList.add("sprite");
-    }
-
-    setGame(g) { this.game = g; }
-    isASprite() { return true; }
-    onMouseClick() {}
-    onMouseRelease() {}
-
-    destroy() {
-        if (this.destroying) {return;}
-        this.destroying = true;
-    }
-    
-    update(dt, mousePos) {
-
-    }
-
-    render(dt) {
-
-    }
-
-    addToBody() {
-
-    }
-}
-
-export class PhysicsSprite extends Sprite {
-    constructor(path, position, size, zindex) {
-        super(path, position, size, zindex);
-        this.velocity = new Vector2(0, 0);
-        this.gravity = 1;
-    }
-
-    update(dt) {
-        const grav = this.gravity * 981;
-        this.velocity = this.velocity.add(new Vector2(0, grav * (dt / 1000)));
-        this.position = this.position.add(this.velocity.multiplyScalar(dt/1000));
-    }
-}
+import { StaticTarget } from "./target.js";
 
 export class Game {
     constructor(debug) {
@@ -66,12 +9,31 @@ export class Game {
         this.renderer = new Render(this)
         this.gameObjects = [];
         this.levels = [];
+        this.targets = [];
         this.currentLevel = undefined;
 
         this.lastUpdate = Date.now();
         this.mouseDown = false;
         this.priorMouseDown = false;
         this.mousePos = new Vector2(0, 0)
+    }
+
+    addTarget(targetInfo) {
+        const exists = this.targets.find((t) => {
+            return t.name == targetInfo.name;
+        })
+
+        this.targets.push(targetInfo);
+    }
+
+    getTarget(targetName) {
+        const target = this.targets.find((t) => {
+            return t.name == targetName;
+        })
+
+        if (target) return target
+        throw new Error(`Target of name ${targetName} doesn't exist`)
+        
     }
 
     addLevel(level) {
@@ -104,8 +66,22 @@ export class Game {
             return
         }
 
+        this.unloadLevel();
+
         const lvlObj = new Level(this, levelName, level);
         this.currentLevel = lvlObj;
+    }
+
+    getTargetsAtPosition(position) {
+        const targets = [];
+
+        this.gameObjects.forEach((e) => {
+            if (!(e instanceof StaticTarget)) return;
+            if (!e.positionInBounds(position)) return;
+            targets.push(e)
+        })
+
+        return targets;
     }
 
     start() {
@@ -120,16 +96,8 @@ export class Game {
         })
 
         document.onpointermove = (event) => {
-            // const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-            // const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-            // var rect = canvas.getBoundingClientRect();
             const {clientX, clientY} = event;
             this.mousePos = this.renderer.getMousePos(new Vector2(clientX, clientY));
-
-            // this.mousePos = new Vector2(
-            //     clientX / vw * 1920,
-            //     clientY / vh * 1080
-            // );
         };
 
         setInterval(() => {
@@ -181,8 +149,6 @@ export class Game {
         this.gameObjects.sort((a, b) => {
             return a.zindex - b.zindex;
         })
-
-        element.addToBody();
     }
 
     onMouseClick() {}

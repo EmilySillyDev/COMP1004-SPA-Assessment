@@ -1,21 +1,24 @@
-import { Vector2 } from "./math.js"
-// import { resolveTargetType } from "./target.js";
+import { Vector2, getRandomInt } from "./math.js"
+import { resolveTargetType } from "./target.js";
 
 export class SpawningWave { 
-    constructor(level, targetType, position, count, flipped, spawnDelay) {
+    constructor(level, spawnInfo) {
         this.level = level;
-        this.targetType = targetType;
+        this.targetType = spawnInfo.type;
 
         this.active = true;
-        this.position = position;
+        this.flipped = spawnInfo.flipped;
+        this.position = new Vector2(spawnInfo.xPos, spawnInfo.yPos);
 
         this.lastSpawn = Date.now();
-        this.spawnTime = spawnDelay;
+        this.spawnTime = spawnInfo.spawnDelay;
+        this.spawnTimeDevation = spawnInfo.spawnDelayDeviation || 0;
 
-        this.count = count;
+        this.count = spawnInfo.count;
         this.infinite = this.count == -1;
 
-        // this.template = resolveTargetType(this.targetType);
+        this.targetInfo = this.level.game.getTarget(this.targetType);
+        this.template = resolveTargetType(this.targetInfo.type);
     }
 
     isActive() {
@@ -27,9 +30,17 @@ export class SpawningWave {
             return; // Max spawns reached
         }
 
-        this.lastSpawn = Date.now();
+        const now = Date.now();
+        this.lastSpawn = getRandomInt(now - this.spawnTimeDevation, now + this.spawnTimeDevation);
         this.count--;
-        console.log("Spawning", this.targetType);
+
+        const t = new this.template(
+            this.targetInfo,
+            this.position
+        )
+
+        t.initProps(this);
+        this.level.loadSprite(t);
     }
 
     update(dt) {
@@ -48,22 +59,28 @@ export class Level {
         this.gameObjects = [];
         this.spawners = [];
 
-        this.levelInfo.targets.forEach((targetInfo) => {
+        this.levelInfo.targets.forEach((spawnInfo) => {
             const spawner = new SpawningWave(
                 this,
-                targetInfo.type,
-                new Vector2(targetInfo.xPos, targetInfo.yPos),
-                targetInfo.count,
-                targetInfo.flipped,
-                targetInfo.spawnDelay
+                spawnInfo,
+                // targetInfo.type,
+                // new Vector2(targetInfo.xPos, targetInfo.yPos),
+                // targetInfo.count,
+                // targetInfo.flipped,
+                // targetInfo.spawnDelay,
+                // targetInfo
             )
 
             this.spawners.push(spawner);
         })
     }
 
-    loadSprite(sprite) {
+    unload() {}
 
+
+    loadSprite(sprite) {
+        this.gameObjects.push(sprite);
+        this.game.addElement(sprite);
     }
 
     isComplete() {
