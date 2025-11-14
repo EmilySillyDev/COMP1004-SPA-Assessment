@@ -1,0 +1,13 @@
+{
+    "name": "Target",
+    "type": "Static",
+    
+    "assets": [
+        "images/target.png"
+    ],
+
+    "targetProps": {
+        "spreadX": 1664,
+        "spreadY": 384
+    }
+}

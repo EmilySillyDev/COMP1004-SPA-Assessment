@@ -2,6 +2,8 @@ import { Game, Sprite } from "./engine.js";
 import { Vector2, getRandomInt } from "./math.js";
 import { Shotgun, Crosshair } from "./shotgun.js";
 import { Cat } from "./cats.js";
+import { loadTarget } from "./target.js";
+import { Level } from "./level.js";
 
 const game = new Game(false);
 
@@ -17,12 +19,37 @@ game.addElement(new Crosshair(96));
     
 game.start();
 
-setInterval(function() {
-    const c = new Cat(new Vector2(0, 512), 256);
-    c.velocity = new Vector2(getRandomInt(350, 650), -getRandomInt(750, 1000));
-    game.addElement(c);
+game.addLevel({
+    "name": "test",
+    "targets": [
+        {
+            "type": "Cat",
+            "xPos": 0,
+            "yPos": 512,
+            "count": -1,
+            "flipped": false,
+            "spawnDelay": 750
+        },
 
-    const c2 = new Cat(new Vector2(1920, 512), 256);
-    c2.velocity = new Vector2(-getRandomInt(350, 650), -getRandomInt(750, 1000));
-    game.addElement(c2);
-}, 750)
+        {
+            "type": "Cat",
+            "xPos": 1920,
+            "yPos": 512,
+            "count": -1,
+            "flipped": true,
+            "spawnDelay": 750
+        }
+    ]
+})
+
+game.loadLevel("test")
+
+// setInterval(function() {
+//     const c = new Cat(new Vector2(0, 512), 256);
+//     c.velocity = new Vector2(getRandomInt(350, 650), -getRandomInt(750, 1000));
+//     game.addElement(c);
+
+//     const c2 = new Cat(new Vector2(1920, 512), 256);
+//     c2.velocity = new Vector2(-getRandomInt(350, 650), -getRandomInt(750, 1000));
+//     game.addElement(c2);
+// }, 750)

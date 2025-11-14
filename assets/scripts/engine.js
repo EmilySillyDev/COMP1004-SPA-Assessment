@@ -1,5 +1,6 @@
 import { Render } from "./render.js";
 import { Vector2 } from "./math.js";
+import { Level } from "./level.js";
 
 export class Sprite { 
     constructor(path, position, size, zindex) {
@@ -64,11 +65,47 @@ export class Game {
         this.debug = debug
         this.renderer = new Render(this)
         this.gameObjects = [];
+        this.levels = [];
+        this.currentLevel = undefined;
 
         this.lastUpdate = Date.now();
         this.mouseDown = false;
         this.priorMouseDown = false;
         this.mousePos = new Vector2(0, 0)
+    }
+
+    addLevel(level) {
+        const exists = this.levels.find((l) => {
+            return l.name == level.name;
+        })
+
+        if (exists) {
+            console.error(`Level of name ${level.name} already exists`);
+            return;
+        }
+
+        this.levels.push(level)
+    }
+
+    unloadLevel() {
+        if (!this.currentLevel) return;
+
+        this.currentLevel.unload();
+        this.currentLevel = null;
+    }
+
+    loadLevel(levelName) {
+        const level = this.levels.find((l) => {
+            return l.name == levelName;
+        })
+
+        if (!level) {
+            console.error(`Level of name ${levelName} doesn't exist`);
+            return
+        }
+
+        const lvlObj = new Level(this, levelName, level);
+        this.currentLevel = lvlObj;
     }
 
     start() {
@@ -99,6 +136,10 @@ export class Game {
             const now = Date.now();
             const dt = now - this.lastUpdate;
             this.lastUpdate = now;
+
+            if (this.currentLevel) {
+                this.currentLevel.update(dt);
+            }
 
             const sendClick = this.mouseDown && !this.priorMouseDown;
             const sendRelease = !this.mouseDown && this.priorMouseDown;

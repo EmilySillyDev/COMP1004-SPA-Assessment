@@ -1,0 +1,21 @@
+{
+    "targets": [
+        {
+            "type": "Cat",
+            "xPos": 0,
+            "yPos": 512,
+            "count": -1,
+            "flipped": false,
+            "spawnDelay": 750
+        },
+
+        {
+            "type": "Cat",
+            "xPos": 1920,
+            "yPos": 512,
+            "count": -1,
+            "flipped": true,
+            "spawnDelay": 750
+        }
+    ]
+}

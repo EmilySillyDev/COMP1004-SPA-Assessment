@@ -1,0 +1,20 @@
+{
+    "name": "Cat",
+    "type": "Physics",
+
+    "assets": [
+        "images/cats/cat1.png",
+        "images/cats/cat2.png",
+        "images/cats/cat3.png",
+        "images/cats/cat4.png",
+        "images/cats/cat5.png"
+    ],
+
+    "targetProps": {
+        "minVelX": 350,
+        "maxVelX": 650,
+        "minVelY": 750,
+        "maxVelY": 1000,
+        "gravity": 1
+    }
+}
