@@ -17,9 +17,9 @@ export class Render {
 
         const dt = now - this.lastRender;
 
-        ctx.canvas.width  = window.innerWidth;
-        ctx.canvas.height = window.innerHeight;
-        // ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        ctx.canvas.width  = 1920;
+        ctx.canvas.height = 1080;
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.game.gameObjects.forEach(element => {
             element.render(dt);
@@ -48,6 +48,21 @@ export class Render {
                     element.size.y
                 )
 
+            }
+
+            if (element.visible) { 
+
+                ctx.drawImage(
+                    element.element,
+                    element.position.x - (element.size.x * element.anchorPoint.x) + (element.size.x * element.spriteOffset.x),
+                    element.position.y - (element.size.y * element.anchorPoint.y) + (element.size.y * element.spriteOffset.y),
+                    element.size.x,
+                    element.size.y
+                );
+
+            }
+
+            if (this.game.debug) {
                 ctx.fillStyle = "#00f";
                 ctx.fillRect (
                     (element.position.x) - 4,
@@ -55,17 +70,7 @@ export class Render {
                     8,
                     8
                 )
-
             }
-
-            ctx.drawImage(
-                element.element,
-                element.position.x - (element.size.x * element.anchorPoint.x) + (element.size.x * element.spriteOffset.x),
-                element.position.y - (element.size.y * element.anchorPoint.y) + (element.size.y * element.spriteOffset.y),
-                element.size.x,
-                element.size.y
-            );
-
 
 
             ctx.setTransform(1,0,0,1,0,0);

@@ -1,4 +1,5 @@
-import { Spring, Sprite, Vector2 } from "./engine.js";
+import { Sprite } from "./engine.js";
+import { Vector2, Spring } from "./math.js";
 
 export class Crosshair extends Sprite {
     constructor(size) {
@@ -16,12 +17,17 @@ export class Shotgun extends Sprite {
         this.anchorPoint = new Vector2(0.5, 1.5);
         this.mousePos = new Vector2(0, 0);
         this.shootAudio = new Audio("assets/audio/shoot.wav");
+        this.shootAudio.volume = 0.35
+        this.shootAudio2 = new Audio("assets/audio/shoot.wav");
+        this.shootAudio2.volume = 0.35
+        
         this.spring = new Spring();
         this.spring.setDamper(0.65);
         this.spring.setSpeed(12);
         this.spring.setTarget(0);
 
         this.element.style.backgroundColor = "#fff";
+        this.curShot = 0;
     }
 
     update(dt, mousePos) {
@@ -31,16 +37,19 @@ export class Shotgun extends Sprite {
 
     onMouseClick(mousePos) {
         console.log(`Shotgun shot at X: ${mousePos.x} Y: ${mousePos.y}`)
-        this.spring.impulse(3);
-        this.shootAudio.pause();
-        this.shootAudio.currentTime = 0;
-        this.shootAudio.play();
+        this.curShot += 1;
+        this.spring.impulse(8);
+        const aud = this.curShot % 2 == 0 ? this.shootAudio2 : this.shootAudio
+        aud.pause();
+        aud.currentTime = 0;
+        aud.play();
     }
 
     render(dt) {
-        const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-        const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-        
+ 
+        const vw = 1920;
+        const vh = 1080;
+
         const mouseXPerc = this.mousePos.x / vw;
         const mouseYPerc = this.mousePos.y / vh;
         const mult = mouseYPerc > 0.35 ? mouseYPerc - 0.35 : 0;
