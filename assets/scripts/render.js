@@ -18,12 +18,14 @@ export class Render {
         this.bpmSpring.setSpeed(12);
         this.bpmSpring.setTarget(0);
 
-
         const canvasContainer = document.getElementById("canvas-container");
 
         this.canvas = document.createElement("canvas");
         this.canvas.oncontextmenu = function() {return false;};
         this.canvas.classList.add("render-canvas");
+        this.canvas.width = 1920;
+        this.canvas.height = 1080;
+        this.ctx = this.canvas.getContext('2d');
 
         canvasContainer.appendChild(this.canvas); 
     }
@@ -41,32 +43,31 @@ export class Render {
 
     render(now) {
 
-         if (this.game.bpm > 0) {
-            const bumpRate = (60 / this.game.bpm) * 1000;
+        // Beat timing (ms per beat)
+        if (this.game.bpm > 0) {
+            const msPerBeat = (60 / this.game.bpm) * 1000; // ms per beat
             const songStart = this.game.musicStart;
-            const now = performance.now();
-            const beatMs = bumpRate * 1000; // bumpRate is seconds per beat
-            const elapsed = Math.max(0, now - songStart); // ms since song started
-            const beatsElapsed = Math.floor(elapsed / bumpRate);
-            const beatTime = songStart + (beatsElapsed) * beatMs;
-
+            const elapsed = Math.max(0, now - songStart);
+            const beatsElapsed = Math.floor(elapsed / msPerBeat);
+            const beatTime = songStart + beatsElapsed * msPerBeat;
             if (this.lastBump < beatTime) {
                 this.lastBump = beatTime;
-                this.bpmSpring.impulse(0.5)
+                this.bpmSpring.impulse(0.5);
             }
-
         }
-
-        const ctx = this.canvas.getContext('2d');
-        ctx.canvas.width  = 1920;
-        ctx.canvas.height = 1080;
 
         if (this.lastRender === undefined) {
             this.lastRender = now;
         }
 
         const dt = now - this.lastRender;
-        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        const ctx = this.ctx;
+
+        // Minimal state reset (no resize per frame)
+        ctx.setTransform(1,0,0,1,0,0);
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = 'source-over';
+        if (ctx.filter !== undefined) ctx.filter = 'none';
 
         ctx.fillStyle = "#87CEEB";
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -85,89 +86,65 @@ export class Render {
             if (typeof my === 'number') originY = my;
         }
 
+        const zoomBase = this.zoomSpring.getPosition();
         this.game.gameObjects.forEach(element => {
-            // Reset transform to identity, then apply centering+scaling per-frame
-            ctx.setTransform(1,0,0,1,0,0);
-            ctx.globalAlpha = 1.0;
-            ctx.globalCompositeOperation = "source-over";
-
-            // apply zoom around the mirrored mouse origin
+            ctx.save();
             if (!element.static) {
-                const scale = ((this.zoomSpring.getPosition() * element.impulseMultiplier) + 1);
+                const scale = (zoomBase * element.impulseMultiplier) + 1;
                 ctx.translate(originX, originY);
                 ctx.scale(scale, scale);
                 ctx.translate(-originX, -originY);
             }
-
-            const posx = element.position.x;
-            const posy = element.position.y;
-
-            ctx.translate(posx, posy);
+            ctx.translate(element.position.x, element.position.y);
             ctx.rotate(element.rotation);
-            ctx.translate(-posx, -posy);
+            ctx.translate(-element.position.x, -element.position.y);
 
-            if (this.game.debug) {
-                ctx.fillStyle = "#f00";
-                ctx.fillRect(
-                    element.position.x - (element.size.x * element.anchorPoint.x) - 1,
-                    element.position.y - (element.size.y * element.anchorPoint.y) - 1,
-                    element.size.x + 2,
-                    element.size.y + 2
-                )
-
-                // ctx.fillStyle = "transparent";
-                ctx.clearRect(
-                    element.position.x - (element.size.x * element.anchorPoint.x),
-                    element.position.y - (element.size.y * element.anchorPoint.y),
-                    element.size.x,
-                    element.size.y
-                )
-
-            }
-
-            if (element.visible) { 
-
+            if (element.visible) {
                 element.render(dt, ctx);
-
             }
 
             if (this.game.debug) {
+                ctx.globalCompositeOperation = 'source-over';
+                
+                // Debug bounding box
+                const bx = element.position.x - (element.size.x * element.anchorPoint.x);
+                const by = element.position.y - (element.size.y * element.anchorPoint.y);
+                const bw = element.size.x;
+                const bh = element.size.y;
+
+                ctx.strokeStyle = "#f00";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(bx - 1, by - 1, bw + 2, bh + 2);
+
+                // Debug anchor point
                 ctx.fillStyle = "#00f";
-                ctx.fillRect (
-                    (element.position.x) - 4,
-                    (element.position.y) - 4,
+                ctx.fillRect(
+                    element.position.x - 4,
+                    element.position.y - 4,
                     8,
                     8
-                )
+                );
             }
+
+            ctx.restore();
         });
 
-        const uiScale = (this.bpmSpring.getPosition() + 1);
-
-
+        const uiScaleBase = this.bpmSpring.getPosition();
         const uiCx = this.canvas.width / 2;
         const uiCy = this.canvas.height / 2;
 
-
-
         this.game.uiObjects.forEach((element) => {
-
-            ctx.setTransform(1,0,0,1,0,0);
-            ctx.globalAlpha = 1.0;
-
+            ctx.save();
             if (!element.static) {
+                const uiScale = uiScaleBase + 1;
                 ctx.translate(uiCx, uiCy);
                 ctx.scale(uiScale, uiScale);
                 ctx.translate(-uiCx, -uiCy);
             }
-
             element.render(dt, ctx);
-        })
-
-        // restore identity transform after drawing UI
-        ctx.setTransform(1,0,0,1,0,0);
+            ctx.restore();
+        });
 
         this.lastRender = now;
-        requestAnimationFrame((s) => this.render(s), this.canvas);
     }
 }

@@ -73,10 +73,13 @@ export class Sprite {
                 this.size.y
             );
 
-            // ctx.fillStyle = "#f00"
-            // ctx.font = "12px consolas";
-            // ctx.fillText(`F: ${frameIdx}`, this.position.x + this.size.x / 2, this.position.y + this.size.x / 2 - 16)
-            // ctx.fillText(`AT: ${this.animationTimer}`, this.position.x + this.size.x / 2, this.position.y + this.size.x / 2)
+            if (this.game.debug) {
+                ctx.fillStyle = "#f00"
+                ctx.font = "12px consolas";
+                ctx.fillText(`F: ${frameIdx}`, 8 + this.position.x + this.size.x / 2, this.position.y + this.size.x / 2 - 18)
+                ctx.fillText(`AT: ${Math.floor(this.animationTimer)}`, 8 + this.position.x + this.size.x / 2, this.position.y + this.size.x / 2 - 2)
+            }
+
 
         } else {
             ctx.drawImage(

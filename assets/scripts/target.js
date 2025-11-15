@@ -70,18 +70,21 @@ export class StaticTarget extends Sprite {
     }
 
     positionInBounds(position) {
-        const leftPos = this.position.x - this.size.x / 2;
-        const rightPos = this.position.x + this.size.x / 2;
-        const bottomPos = this.position.y + this.size.x / 2;
-        const topPos = this.position.y - this.size.y / 2;
+        // Translate point into the target's local space then rotate by -rotation
+        const dx = position.x - this.position.x;
+        const dy = position.y - this.position.y;
+        const theta = this.rotation || 0;
+        const cos = Math.cos(theta);
+        const sin = Math.sin(theta);
 
-        const inX = position.x >= leftPos && position.x <= rightPos;
-        const inY = position.y >= topPos && position.y <= bottomPos;
+        // Rotate by -theta: local = R(-theta) * (dx,dy)
+        const localX = dx * cos + dy * sin;
+        const localY = -dx * sin + dy * cos;
 
-        if (!inX) return false;
-        if (!inY) return false;
+        const halfW = this.size.x / 2;
+        const halfH = this.size.y / 2;
 
-        return true
+        return localX >= -halfW && localX <= halfW && localY >= -halfH && localY <= halfH;
     }
 
     escaped() {

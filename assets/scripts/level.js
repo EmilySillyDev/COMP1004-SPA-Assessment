@@ -75,13 +75,7 @@ export class Level {
         this.levelInfo.targets.forEach((spawnInfo) => {
             const spawner = new SpawningWave(
                 this,
-                spawnInfo,
-                // targetInfo.type,
-                // new Vector2(targetInfo.xPos, targetInfo.yPos),
-                // targetInfo.count,
-                // targetInfo.flipped,
-                // targetInfo.spawnDelay,
-                // targetInfo
+                spawnInfo
             )
 
             this.spawners.push(spawner);

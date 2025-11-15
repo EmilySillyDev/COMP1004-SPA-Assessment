@@ -159,6 +159,33 @@ export class Game {
         }
     }
 
+    gameLoop(now) {
+        const dt = now - this.lastUpdate;
+        this.lastUpdate = now;
+
+        if (this.currentLevel) {
+            this.currentLevel.update(dt);
+        }
+
+        const sendClick = this.mouseDown && !this.priorMouseDown;
+        const sendRelease = !this.mouseDown && this.priorMouseDown;
+        this.priorMouseDown = this.mouseDown;
+
+        const removalQueue = [];
+        this.gameObjects.forEach((e) => {
+            this.updateElement(e, dt, sendClick, sendRelease, removalQueue);
+        });
+        removalQueue.forEach((e) => {
+            const idx = this.gameObjects.indexOf(e);
+            if (idx !== -1) {
+                this.gameObjects.splice(idx, 1);
+            }
+        });
+
+        this.renderer.render(now);
+        requestAnimationFrame((n) => {this.gameLoop(n)});
+    };
+
     start() {
         document.addEventListener("mousedown", (e) => {
             if (e.button != 0) {return;}
@@ -175,35 +202,8 @@ export class Game {
             this.mousePos = this.renderer.getMousePos(new Vector2(clientX, clientY));
         };
 
-        setInterval(() => {
-            const now = performance.now();
-            const dt = now - this.lastUpdate;
-            this.lastUpdate = now;
-
-            if (this.currentLevel) {
-                this.currentLevel.update(dt);
-            }
-
-            const sendClick = this.mouseDown && !this.priorMouseDown;
-            const sendRelease = !this.mouseDown && this.priorMouseDown;
-            this.priorMouseDown = this.mouseDown;
-            
-            const removalQueue = [];
-
-            this.gameObjects.forEach((e) => {
-                this.updateElement(e, dt, sendClick, sendRelease, removalQueue)
-            })
-
-            removalQueue.forEach((e) => {
-                const idx = this.gameObjects.indexOf(e);
-                if (idx) {
-                    this.gameObjects.splice(idx, 1);
-                }
-            })
-
-        }, 1);
-
-        this.renderer.render(performance.now())
+        this.lastUpdate = performance.now();
+        requestAnimationFrame((n) => {this.gameLoop(n)});
     }
 
     addElement(element) {

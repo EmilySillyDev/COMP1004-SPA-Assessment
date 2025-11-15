@@ -1,11 +1,11 @@
-import { BackgroundElement, Cloud, MovingBackgroundElement } from "./aesthetics.js";
+import { BackgroundElement, Cloud } from "./aesthetics.js";
 import { Game } from "./engine.js";
 import { Vector2, getRandomInt } from "./math.js";
 import { Shotgun, Crosshair } from "./shotgun.js";
-import { Sprite } from "./sprite.js";
-import { FadeTextLabel, FPSCounter, Frame, TextLabel } from "./ui.js";
+import { FadeTextLabel, FPSCounter, TextLabel } from "./ui.js";
 
 const game = new Game(false);
+window.game = game;
 
 game.addElement(new BackgroundElement(
     "/assets/images/hills.png",
@@ -168,13 +168,3 @@ game.addUiElement(targetLabel);
 game.addUiElement(comboLabel);
 game.addUiElement(missLabel);
 game.addUiElement(fpsCounter);
-
-// setInterval(function() {
-//     const c = new Cat(new Vector2(0, 512), 256);
-//     c.velocity = new Vector2(getRandomInt(350, 650), -getRandomInt(750, 1000));
-//     game.addElement(c);
-
-//     const c2 = new Cat(new Vector2(1920, 512), 256);
-//     c2.velocity = new Vector2(-getRandomInt(350, 650), -getRandomInt(750, 1000));
-//     game.addElement(c2);
-// }, 750)
