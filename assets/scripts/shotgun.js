@@ -1,5 +1,5 @@
 import { Sprite } from "./sprite.js";
-import { Vector2, Spring } from "./math.js";
+import { Vector2, Spring, getRandomFloat } from "./math.js";
 
 export class Crosshair extends Sprite {
     constructor(size) {
@@ -9,6 +9,13 @@ export class Crosshair extends Sprite {
     update(dt, mousePos) {
         this.position = mousePos;
     }
+
+    render(dt, ctx) {
+        super.render(dt, ctx);
+        ctx.globalCompositeOperation = 'difference';
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(this.position.x - 5, this.position.y - 5, 10, 10)
+    }
 }
 
 export class Shotgun extends Sprite {
@@ -16,10 +23,15 @@ export class Shotgun extends Sprite {
         super("assets/images/shotgun.png", new Vector2(0, 0), new Vector2(width, width / 162 * 295), 2);
         this.anchorPoint = new Vector2(0.5, 1.5);
         this.mousePos = new Vector2(0, 0);
+        
         this.shootAudio = new Audio("assets/audio/shoot.wav");
+        this.shootAudio.preservesPitch = false
         this.shootAudio.volume = 0.35
+
         this.shootAudio2 = new Audio("assets/audio/shoot.wav");
+        this.shootAudio2.preservesPitch = false;
         this.shootAudio2.volume = 0.35
+
         
         this.spring = new Spring();
         this.spring.setDamper(0.65);
@@ -29,9 +41,12 @@ export class Shotgun extends Sprite {
         this.element.style.backgroundColor = "#fff";
         this.curShot = 0;
         this.lastShot = 0;
+        this.breathTimer = 0;
+        this.breathingRate = 1;
     }
 
     update(dt, mousePos) {
+        this.breathingRate = 1 + (this.game.combo / 50)
         this.mousePos = mousePos;
         super.update(dt, mousePos);
     }
@@ -60,6 +75,7 @@ export class Shotgun extends Sprite {
 
         const aud = this.curShot % 2 == 0 ? this.shootAudio2 : this.shootAudio
         aud.pause();
+        aud.playbackRate = getRandomFloat(0.95, 1.05);
         aud.currentTime = 0;
         aud.play();
     }
@@ -74,11 +90,14 @@ export class Shotgun extends Sprite {
         const mult = mouseYPerc > 0.35 ? mouseYPerc - 0.35 : 0;
 
         // console.log(this.spring.getPosition());
+        this.breathTimer += (dt / 1000) * this.breathingRate * 1.75;
+
+        const breathing = Math.sin(this.breathTimer) * 8;
 
         this.position = new Vector2(
             (vw * 0.5) + (0.5 * mouseXPerc - 0.25) * vw,
             // vh * 0.5
-            (vh * 1.3) + (0.35 * mult) * vh
+            ((vh * 1.3) + (0.35 * mult) * vh) + breathing
         )
 
         this.spriteOffset = new Vector2(

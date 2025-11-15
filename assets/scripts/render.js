@@ -90,6 +90,7 @@ export class Render {
             // Reset transform to identity, then apply centering+scaling per-frame
             ctx.setTransform(1,0,0,1,0,0);
             ctx.globalAlpha = 1.0;
+            ctx.globalCompositeOperation = "source-over";
 
             // apply zoom around the mirrored mouse origin
             ctx.translate(originX, originY);

@@ -1,9 +1,9 @@
 import { Sprite } from "./sprite.js";
-import { getRandomInt, Vector2 } from "./math.js";
+import { getRandomFloat, getRandomInt, Vector2 } from "./math.js";
 
 export function getTargetImage(targetInfo) {
     const assets = targetInfo.assets.images || ["images/missing.png"];
-    const image = assets[getRandomInt(0, assets.length - 1)];
+    const image = assets[getRandomInt(0, assets.length)];
     return `assets/${image}`
 }
 
@@ -60,6 +60,9 @@ export class StaticTarget extends Sprite {
 
         this.dieSound = new Audio(`assets/${targetInfo.assets.killsound || "audio/killsound.wav"}`);
         this.dieSound.volume = 1;
+
+        this.damageSound = new Audio(`assets/audio/damage.wav`);
+        this.damageSound.volume = 0.25;
     }
 
     initProps() {
@@ -84,6 +87,7 @@ export class StaticTarget extends Sprite {
     escaped() {
         this.game.escaped++;
         this.game.resetCombo();
+        this.damageSound.play();
         this.destroy();
     }
 
@@ -116,6 +120,7 @@ export class PhysicsTarget extends StaticTarget {
         const yVel = -getRandomInt(this.targetProps.minVelY, this.targetProps.maxVelY);
         this.gravity = this.targetProps.gravity;
         this.velocity = new Vector2(xVel, yVel);
+        this.angularVelocity = getRandomFloat(10, 20) * Math.PI / 180 * (Math.random() > 0.5 ? -1 : 1);
 
     }
 
@@ -124,6 +129,7 @@ export class PhysicsTarget extends StaticTarget {
         const grav = this.gravity * 981;
         this.velocity = this.velocity.add(new Vector2(0, grav * (dt / 1000)));
         this.position = this.position.add(this.velocity.multiplyScalar(dt/1000));
+        this.rotation += this.angularVelocity * (dt / 1000);
 
         if (this.position.y > (1080 + this.size.y)) {
             this.escaped()

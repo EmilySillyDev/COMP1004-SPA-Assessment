@@ -165,5 +165,9 @@ export class Spring {
 }
 
 export function getRandomInt(min, max) {
-  return min + Math.floor(Math.random() * (max - min));
+    return min + Math.floor(Math.random() * (max - min));
+}
+
+export function getRandomFloat(min, max) {
+    return min + (Math.random() * (max - min));
 }

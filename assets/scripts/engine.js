@@ -2,6 +2,7 @@ import { Render } from "./render.js";
 import { Vector2 } from "./math.js";
 import { Level } from "./level.js";
 import { StaticTarget } from "./target.js";
+import { Sprite } from "./sprite.js";
 
 export class Game {
     constructor(debug) {
@@ -20,7 +21,7 @@ export class Game {
         this.lastUpdate = Date.now();
         this.mouseDown = false;
         this.priorMouseDown = false;
-        this.mousePos = new Vector2(0, 0)
+        this.mousePos = new Vector2(1920 / 2, 250)
 
         this.musicStart = 0;
         this.bpm = 0;
@@ -97,6 +98,23 @@ export class Game {
 
         const lvlObj = new Level(this, levelName, level);
         this.currentLevel = lvlObj;
+
+        if (levelName == "endless") {
+            const cat = new Sprite(
+                "assets/images/cats/rarecat.png",
+                new Vector2(128, 128),
+                new Vector2(164, 160),
+                100
+            )
+
+            cat.frameSize = new Vector2(82, 80);
+            cat.animated = true;
+            cat.animationDelay = 30;
+            cat.animationFrames = 29;
+            cat.atlasWidth = 5;
+
+            this.addElement(cat);
+        }
     }
 
     getTargetsAtPosition(position) {

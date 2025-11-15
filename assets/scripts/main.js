@@ -48,13 +48,11 @@ game.addTarget({
         ]
     },
 
-
-
     "targetProps": {
-        "minVelX": 350,
-        "maxVelX": 650,
+        "minVelX": 450,
+        "maxVelX": 850,
         "minVelY": 750,
-        "maxVelY": 1000,
+        "maxVelY": 1250,
         "gravity": 1
     }
 })
@@ -90,8 +88,8 @@ game.addLevel({
     "targets": [
         {
             "type": "Cat",
-            "xPos": 0,
-            "yPos": 512,
+            "xPos": -256,
+            "yPos": 800,
             "count": -1,
             "flipped": false,
             "spawnDelay": 750,
@@ -100,8 +98,8 @@ game.addLevel({
 
         {
             "type": "Cat",
-            "xPos": 1920,
-            "yPos": 512,
+            "xPos": 1920 + 256,
+            "yPos": 800,
             "count": -1,
             "flipped": true,
             "spawnDelay": 750,
@@ -150,19 +148,6 @@ missLabel.text = function(){
     return `Misses: ${game.escaped}`;
 };
 
-const cat = new Sprite(
-    "assets/images/cats/rarecat.png",
-    new Vector2(128, 128),
-    new Vector2(164, 160),
-    100
-)
-
-cat.frameSize = new Vector2(82, 80);
-cat.animated = true;
-cat.animationDelay = 30;
-cat.animationFrames = 29;
-cat.atlasWidth = 5;
-game.addElement(cat);
 game.addUiElement(welcomeLabel);
 game.addUiElement(targetLabel);
 game.addUiElement(comboLabel);
