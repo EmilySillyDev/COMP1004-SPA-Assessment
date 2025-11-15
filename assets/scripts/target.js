@@ -104,6 +104,7 @@ export class PhysicsTarget extends StaticTarget {
     constructor(targetInfo, position) {
         super(targetInfo, position)
         this.velocity = new Vector2(0, 0);
+        this.angularVelocity = 0;
         this.gravity = 1;
     }
 

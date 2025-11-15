@@ -1,17 +1,29 @@
+import { BackgroundElement, Cloud, MovingBackgroundElement } from "./aesthetics.js";
 import { Game } from "./engine.js";
 import { Vector2, getRandomInt } from "./math.js";
 import { Shotgun, Crosshair } from "./shotgun.js";
 import { Sprite } from "./sprite.js";
-import { FadeTextLabel, Frame, TextLabel } from "./ui.js";
+import { FadeTextLabel, FPSCounter, Frame, TextLabel } from "./ui.js";
 
 const game = new Game(false);
 
-game.addElement(new Sprite(
+game.addElement(new BackgroundElement(
     "/assets/images/hills.png",
     new Vector2(960, 540),
     new Vector2(1920 * 1.1, 1080 * 1.1),
-    -1
+    1
 ));
+
+const clouds = [
+    new Cloud(new Vector2(-278, 128), new Vector2(556, 187), 3, 100),
+    new Cloud(new Vector2(850, 196), new Vector2(556, 200).multiplyScalar(0.85), 2, 75, new Vector2(-278 * 0.85, 196)),
+    new Cloud(new Vector2(1500, 196), new Vector2(556, 200).multiplyScalar(1.25), 4, 50, new Vector2(-278 * 1.25, 196)),
+    new Cloud(new Vector2(1200, 220), new Vector2(556, 187), 3, 100, new Vector2(-278, 220))
+]
+
+clouds.forEach((c) => {
+    game.addElement(c);
+})
 
 game.addElement(new Shotgun(256));
 game.addElement(new Crosshair(96));
@@ -110,6 +122,7 @@ game.addLevel({
 
 game.addLevel({
     "name": "menu",
+    "noAnnounce": true,
 
     "targets": [
         {
@@ -125,6 +138,8 @@ game.addLevel({
 
 game.start();
 game.loadLevel("menu")
+
+const fpsCounter = new FPSCounter();
 
 const welcomeLabel = new FadeTextLabel();
 welcomeLabel.text = "Shoot the Target to Start!";
@@ -152,6 +167,7 @@ game.addUiElement(welcomeLabel);
 game.addUiElement(targetLabel);
 game.addUiElement(comboLabel);
 game.addUiElement(missLabel);
+game.addUiElement(fpsCounter);
 
 // setInterval(function() {
 //     const c = new Cat(new Vector2(0, 512), 256);

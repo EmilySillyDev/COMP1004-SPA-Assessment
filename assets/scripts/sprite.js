@@ -11,6 +11,8 @@ export class Sprite {
         this.flipX = false;
         this.flipY = false;
         this.zindex = zindex
+        this.static = false;
+        this.impulseMultiplier = 1;
 
         this.anchorPoint = new Vector2(0.5, 0.5);
         this.spriteOffset = new Vector2;

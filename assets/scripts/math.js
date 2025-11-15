@@ -46,11 +46,11 @@ export class Spring {
         this.target = 0;
         this.speed = 1;
         this.damper = 1;
-        this.time = Date.now();
+        this.time = performance.now();
     }
 
     setPosition(position) {
-        const now = Date.now();
+        const now = performance.now();
         const {pos, vel} = this.positionVelocity(now);
         this.position = position;
         this.velocity = vel;
@@ -58,11 +58,11 @@ export class Spring {
     }
 
     getPosition() {
-        return this.positionVelocity(Date.now()).pos;
+        return this.positionVelocity(performance.now()).pos;
     }
 
     setVelocity(velocity) {
-        const now = Date.now();
+        const now = performance.now();
         const {pos, vel} = this.positionVelocity(now);
         this.position = pos;
         this.velocity = velocity;
@@ -70,11 +70,11 @@ export class Spring {
     }
 
     getVelocity() {
-        return this.positionVelocity(Date.now()).vel;
+        return this.positionVelocity(performance.now()).vel;
     }
 
     setTarget(target) {
-        const now = Date.now();
+        const now = performance.now();
         const {pos, vel} = this.positionVelocity(now);
         this.position = pos;
         this.velocity = vel;
@@ -87,7 +87,7 @@ export class Spring {
     }
 
     setSpeed(speed) {
-        const now = Date.now();
+        const now = performance.now();
         const {pos, vel} = this.positionVelocity(now);
         this.position = pos;
         this.velocity = vel;
@@ -100,7 +100,7 @@ export class Spring {
     }
 
     setDamper(damper) {
-        const now = Date.now();
+        const now = performance.now();
         const {pos, vel} = this.positionVelocity(now);
         this.position = pos;
         this.velocity = vel;

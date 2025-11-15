@@ -1,5 +1,6 @@
 import { Sprite } from "./sprite.js";
 import { Vector2, Spring, getRandomFloat } from "./math.js";
+import { ShotgunShell } from "./aesthetics.js";
 
 export class Crosshair extends Sprite {
     constructor(size) {
@@ -22,17 +23,18 @@ export class Shotgun extends Sprite {
     constructor(width) {
         super("assets/images/shotgun.png", new Vector2(0, 0), new Vector2(width, width / 162 * 295), 2);
         this.anchorPoint = new Vector2(0.5, 1.5);
-        this.mousePos = new Vector2(0, 0);
+        this.target = new Vector2(0, 0);
         
+        // Two audio instances to allow for overlapping fire sounds
         this.shootAudio = new Audio("assets/audio/shoot.wav");
-        this.shootAudio.preservesPitch = false
-        this.shootAudio.volume = 0.35
+        this.shootAudio.preservesPitch = false;
+        this.shootAudio.volume = 0.3;
 
         this.shootAudio2 = new Audio("assets/audio/shoot.wav");
         this.shootAudio2.preservesPitch = false;
-        this.shootAudio2.volume = 0.35
+        this.shootAudio2.volume = 0.3
 
-        
+        // Hooks's law spring, allows for convincing recoil effect
         this.spring = new Spring();
         this.spring.setDamper(0.65);
         this.spring.setSpeed(12);
@@ -41,23 +43,26 @@ export class Shotgun extends Sprite {
         this.element.style.backgroundColor = "#fff";
         this.curShot = 0;
         this.lastShot = 0;
+
+        // Passive shotgun viewbobbing
+        // Also increases with a higher combo
         this.breathTimer = 0;
         this.breathingRate = 1;
     }
 
     update(dt, mousePos) {
         this.breathingRate = 1 + (this.game.combo / 50)
-        this.mousePos = mousePos;
+        this.target = mousePos;
         super.update(dt, mousePos);
     }
 
     onMouseClick(mousePos) {
-        const now = Date.now();
+        const now = performance.now();
         if (now - this.lastShot < 200) { return; }
 
-        console.log(`Shotgun shot at X: ${mousePos.x} Y: ${mousePos.y}`)
+        console.log(`Shotgun shot at X: ${this.target.x} Y: ${this.target.y}`)
         
-        const targets = this.game.getTargetsAtPosition(mousePos);
+        const targets = this.game.getTargetsAtPosition(this.target);
 
         targets.forEach(element => {
             element.kill();
@@ -78,6 +83,25 @@ export class Shotgun extends Sprite {
         aud.playbackRate = getRandomFloat(0.95, 1.05);
         aud.currentTime = 0;
         aud.play();
+
+        // Shotgun shell
+        const dir = this.curShot % 2 == 0 ? 1 : -1;
+        const localOffset = new Vector2(64 * dir, -412);
+        const cos = Math.cos(this.rotation);
+        const sin = Math.sin(this.rotation);
+
+        const rotatedOffset = new Vector2(
+            localOffset.x * cos - localOffset.y * sin,
+            localOffset.x * sin + localOffset.y * cos
+        );
+
+        const shellSpawnPos = this.position.add(rotatedOffset);
+        const shell = new ShotgunShell(shellSpawnPos, new Vector2(64, 128), this.zindex + 1);
+
+        shell.velocity = new Vector2(getRandomFloat(512, 600) * dir, -getRandomFloat(450, 650))
+        shell.angularVelocity = getRandomFloat(5, 15) * dir;
+
+        this.game.addElement(shell);
     }
 
     render(dt, ctx) {
@@ -85,8 +109,8 @@ export class Shotgun extends Sprite {
         const vw = 1920;
         const vh = 1080;
 
-        const mouseXPerc = this.mousePos.x / vw;
-        const mouseYPerc = this.mousePos.y / vh;
+        const mouseXPerc = this.target.x / vw;
+        const mouseYPerc = this.target.y / vh;
         const mult = mouseYPerc > 0.35 ? mouseYPerc - 0.35 : 0;
 
         // console.log(this.spring.getPosition());
@@ -105,8 +129,8 @@ export class Shotgun extends Sprite {
             this.spring.getPosition()
         )
 
-        const deltaX = this.mousePos.x - this.position.x;
-        const deltaY = this.mousePos.y - this.position.y;
+        const deltaX = this.target.x - this.position.x;
+        const deltaY = this.target.y - this.position.y;
         let angle = Math.atan2(deltaY, deltaX);
         angle += (Math.PI / 2);
 
@@ -174,7 +198,7 @@ export class Shotgun extends Sprite {
 //     }
 
 //     shoot() {
-//         const now = Date.now();
+//         const now = performance.now();
 
 //         if ((now - this.lastShot) < this.cooldown) {
 //             return;

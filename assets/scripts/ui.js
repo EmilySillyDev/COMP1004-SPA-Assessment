@@ -72,23 +72,42 @@ export class TextLabel extends UIBase {
     }
 }
 
+export class FPSCounter extends TextLabel {
+    constructor() {
+        super();
+        this.text = "FPS: 0";
+        this.fontColour = "#F00";
+        this.fontSize = 12;
+        this.position = new Vector2(8, 16);
+        this.lastFPSUpdate = undefined;
+        this.updateRate = 50;
+    }
+
+    render(dt, ctx) {
+        super.render(dt, ctx);
+        if ((this.lastFPSUpdate) && (performance.now() - this.lastFPSUpdate < this.updateRate)) return;
+        this.lastFPSUpdate = performance.now();
+        this.text = `FPS: ${Math.floor(1000 / dt)}`
+    }
+}
+
 export class FadeTextLabel extends TextLabel {
     constructor() {
         super()
         this.fadeIn = 0.5;
         this.fadeOut = 0.5;
         this.persistLength = 3;
-        this.start = Date.now();
+        this.start = performance.now();
         this.destroyOnFinish = true;
     }
 
     created() {
         super.created();
-        this.start = Date.now();
+        this.start = performance.now();
     }
 
     calculateTransparency() {
-        const timeline = (Date.now() - this.start) / 1000;
+        const timeline = (performance.now() - this.start) / 1000;
         const lifetime = this.fadeIn + this.persistLength + this.fadeOut;
 
         if (timeline > lifetime) {

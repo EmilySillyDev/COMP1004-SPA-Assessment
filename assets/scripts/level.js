@@ -10,7 +10,7 @@ export class SpawningWave {
         this.flipped = spawnInfo.flipped;
         this.position = new Vector2(spawnInfo.xPos, spawnInfo.yPos);
 
-        this.lastSpawn = Date.now();
+        this.lastSpawn = performance.now();
         this.spawnTime = spawnInfo.spawnDelay;
         this.spawnTimeDevation = spawnInfo.spawnDelayDeviation || 0;
 
@@ -30,7 +30,7 @@ export class SpawningWave {
             return; // Max spawns reached
         }
 
-        const now = Date.now();
+        const now = performance.now();
         this.lastSpawn = getRandomInt(now - this.spawnTimeDevation, now + this.spawnTimeDevation);
         this.count--;
 
@@ -45,7 +45,7 @@ export class SpawningWave {
 
     update(dt) {
         if (!this.isActive()) return;
-        if ((Date.now() - this.lastSpawn) < this.spawnTime) return;
+        if ((performance.now() - this.lastSpawn) < this.spawnTime) return;
         this.spawn()
     }
 }
@@ -54,6 +54,8 @@ export class Level {
     constructor(game, name, levelInfo) {
         this.game = game;
         this.name = name;
+        this.noAnnounce = levelInfo.noAnnounce || false;
+
         this.levelInfo = levelInfo;
 
         this.gameObjects = [];

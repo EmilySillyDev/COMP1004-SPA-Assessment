@@ -44,7 +44,7 @@ export class Render {
          if (this.game.bpm > 0) {
             const bumpRate = (60 / this.game.bpm) * 1000;
             const songStart = this.game.musicStart;
-            const now = Date.now();
+            const now = performance.now();
             const beatMs = bumpRate * 1000; // bumpRate is seconds per beat
             const elapsed = Math.max(0, now - songStart); // ms since song started
             const beatsElapsed = Math.floor(elapsed / bumpRate);
@@ -71,7 +71,6 @@ export class Render {
         ctx.fillStyle = "#87CEEB";
         ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        const scale = (this.zoomSpring.getPosition() + 1);
         const cx = this.canvas.width / 2;
         const cy = this.canvas.height / 2;
 
@@ -93,9 +92,12 @@ export class Render {
             ctx.globalCompositeOperation = "source-over";
 
             // apply zoom around the mirrored mouse origin
-            ctx.translate(originX, originY);
-            ctx.scale(scale, scale);
-            ctx.translate(-originX, -originY);
+            if (!element.static) {
+                const scale = ((this.zoomSpring.getPosition() * element.impulseMultiplier) + 1);
+                ctx.translate(originX, originY);
+                ctx.scale(scale, scale);
+                ctx.translate(-originX, -originY);
+            }
 
             const posx = element.position.x;
             const posy = element.position.y;

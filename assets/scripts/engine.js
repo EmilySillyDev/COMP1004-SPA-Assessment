@@ -3,6 +3,7 @@ import { Vector2 } from "./math.js";
 import { Level } from "./level.js";
 import { StaticTarget } from "./target.js";
 import { Sprite } from "./sprite.js";
+import { FadeTextLabel } from "./ui.js";
 
 export class Game {
     constructor(debug) {
@@ -17,8 +18,9 @@ export class Game {
         this.levels = [];
         this.targets = [];
         this.currentLevel = undefined;
+        this.difficulty = "hard";
 
-        this.lastUpdate = Date.now();
+        this.lastUpdate = performance.now();
         this.mouseDown = false;
         this.priorMouseDown = false;
         this.mousePos = new Vector2(1920 / 2, 250)
@@ -26,6 +28,17 @@ export class Game {
         this.musicStart = 0;
         this.bpm = 0;
         this.bumpIntensity = 0;
+    }
+
+    announceGamemode() {
+        if (!this.currentLevel) return;
+        if (this.currentLevel.noAnnounce) return;
+        const label = new FadeTextLabel();
+        label.text = `${this.currentLevel.name} - ${this.difficulty}`.toUpperCase();
+        label.fontColour = "#F00"
+        label.textAlign = "right";
+        label.position = new Vector2(1920 - 96, 128);
+        this.addUiElement(label);
     }
 
     addCombo() {
@@ -43,7 +56,7 @@ export class Game {
     setMusicBump(bpm, intensity) {
         this.bpm = bpm;
         this.bumpIntensity = intensity;
-        this.musicStart = Date.now();
+        this.musicStart = performance.now();
     }
 
     addTarget(targetInfo) {
@@ -115,6 +128,8 @@ export class Game {
 
             this.addElement(cat);
         }
+
+        this.announceGamemode();
     }
 
     getTargetsAtPosition(position) {
@@ -161,7 +176,7 @@ export class Game {
         };
 
         setInterval(() => {
-            const now = Date.now();
+            const now = performance.now();
             const dt = now - this.lastUpdate;
             this.lastUpdate = now;
 
