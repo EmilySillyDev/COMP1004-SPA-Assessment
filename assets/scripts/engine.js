@@ -8,6 +8,11 @@ export class Game {
         this.debug = debug
         this.renderer = new Render(this)
         this.gameObjects = [];
+        this.uiObjects = [];
+        this.targetsHit = 0;
+        this.combo = 0;
+        this.highestCombo = 0;
+        this.escaped = 0;
         this.levels = [];
         this.targets = [];
         this.currentLevel = undefined;
@@ -16,6 +21,28 @@ export class Game {
         this.mouseDown = false;
         this.priorMouseDown = false;
         this.mousePos = new Vector2(0, 0)
+
+        this.musicStart = 0;
+        this.bpm = 0;
+        this.bumpIntensity = 0;
+    }
+
+    addCombo() {
+        this.combo++;
+    }
+
+    resetCombo() {
+        if (this.combo > this.highestCombo) {
+            this.highestCombo = this.combo;
+        }
+
+        this.combo = 0;
+    }
+
+    setMusicBump(bpm, intensity) {
+        this.bpm = bpm;
+        this.bumpIntensity = intensity;
+        this.musicStart = Date.now();
     }
 
     addTarget(targetInfo) {
@@ -84,6 +111,21 @@ export class Game {
         return targets;
     }
 
+    updateElement(e, dt, sendClick, sendRelease, removalQueue) {
+        if (e.destroying) {
+            removalQueue.push(e);
+            return;
+        }
+
+        e.update(dt, this.mousePos);
+
+        if (sendClick) {
+            e.onMouseClick(this.mousePos);
+        } else if (sendRelease) {
+            e.onMouseRelease(this.mousePos);
+        }
+    }
+
     start() {
         document.addEventListener("mousedown", (e) => {
             if (e.button != 0) {return;}
@@ -116,18 +158,7 @@ export class Game {
             const removalQueue = [];
 
             this.gameObjects.forEach((e) => {
-                if (e.destroying) {
-                    removalQueue.push(e);
-                    return;
-                }
-
-                e.update(dt, this.mousePos);
-
-                if (sendClick) {
-                    e.onMouseClick(this.mousePos);
-                } else if (sendRelease) {
-                    e.onMouseRelease(this.mousePos);
-                }
+                this.updateElement(e, dt, sendClick, sendRelease, removalQueue)
             })
 
             removalQueue.forEach((e) => {
@@ -149,6 +180,12 @@ export class Game {
         this.gameObjects.sort((a, b) => {
             return a.zindex - b.zindex;
         })
+    }
+
+    addUiElement(element) {
+        element.setGame(this);
+        element.created();
+        this.uiObjects.push(element);
     }
 
     onMouseClick() {}

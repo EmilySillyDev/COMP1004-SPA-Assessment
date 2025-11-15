@@ -58,7 +58,7 @@ export class StaticTarget extends Sprite {
         this.targetProps = targetInfo.targetProps
         this.alive = true;
 
-        this.dieSound = new Audio("assets/audio/killsound.wav");
+        this.dieSound = new Audio(`assets/${targetInfo.assets.killsound || "audio/killsound.wav"}`);
         this.dieSound.volume = 1;
     }
 
@@ -81,11 +81,18 @@ export class StaticTarget extends Sprite {
         return true
     }
 
+    escaped() {
+        this.game.escaped++;
+        this.game.resetCombo();
+        this.destroy();
+    }
+
     kill() {
         if (!this.alive) return;
         this.alive = false;
         this.dieSound.play();
         this.destroy();
+        this.game.targetsHit++;
     }
 }
 
@@ -117,7 +124,13 @@ export class PhysicsTarget extends StaticTarget {
         const grav = this.gravity * 981;
         this.velocity = this.velocity.add(new Vector2(0, grav * (dt / 1000)));
         this.position = this.position.add(this.velocity.multiplyScalar(dt/1000));
+
+        if (this.position.y > (1080 + this.size.y)) {
+            this.escaped()
+        }
     }
+
+    
 }
 
 // Used for UI elements

@@ -46,7 +46,12 @@ export class Shotgun extends Sprite {
 
         targets.forEach(element => {
             element.kill();
+            this.game.addCombo();
         });
+
+        if (targets.length == 0) {
+            this.game.resetCombo();
+        }
 
         this.curShot += 1;
         this.lastShot = now;
@@ -59,7 +64,7 @@ export class Shotgun extends Sprite {
         aud.play();
     }
 
-    render(dt) {
+    render(dt, ctx) {
  
         const vw = 1920;
         const vh = 1080;
@@ -87,7 +92,7 @@ export class Shotgun extends Sprite {
         angle += (Math.PI / 2);
 
         this.rotation = angle;
-        super.render(dt);
+        super.render(dt, ctx);
     }
 }
 

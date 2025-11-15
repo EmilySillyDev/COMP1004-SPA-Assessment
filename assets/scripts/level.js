@@ -59,6 +59,17 @@ export class Level {
         this.gameObjects = [];
         this.spawners = [];
 
+        if (levelInfo.music) {
+            this.music = new Audio(`assets/audio/music/${levelInfo.music.src}`);
+            this.music.volume = 0.65;
+            this.music.autoplay = true;
+            this.music.loop = true;
+            this.music.play();
+            if (levelInfo.music.bpm) {
+                this.game.setMusicBump(levelInfo.music.bpm, 0.5);
+            }
+        }
+
         this.levelInfo.targets.forEach((spawnInfo) => {
             const spawner = new SpawningWave(
                 this,

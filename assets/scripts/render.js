@@ -3,16 +3,28 @@ import { Spring, Vector2 } from "./math.js";
 export class Render {
     constructor(game) {
         this.game = game
+        
         this.lastRender = undefined;
+        this.lastUIRender = undefined;
+
+        this.lastBump = 0;
         this.zoomSpring = new Spring();
         this.zoomSpring.setDamper(0.65);
         this.zoomSpring.setSpeed(12);
         this.zoomSpring.setTarget(0);
 
+        this.bpmSpring = new Spring();
+        this.bpmSpring.setDamper(0.65);
+        this.bpmSpring.setSpeed(12);
+        this.bpmSpring.setTarget(0);
+
+
         const canvasContainer = document.getElementById("canvas-container");
 
         this.canvas = document.createElement("canvas");
+        this.canvas.oncontextmenu = function() {return false;};
         this.canvas.classList.add("render-canvas");
+
         canvasContainer.appendChild(this.canvas); 
     }
 
@@ -28,6 +40,23 @@ export class Render {
     }
 
     render(now) {
+
+         if (this.game.bpm > 0) {
+            const bumpRate = (60 / this.game.bpm) * 1000;
+            const songStart = this.game.musicStart;
+            const now = Date.now();
+            const beatMs = bumpRate * 1000; // bumpRate is seconds per beat
+            const elapsed = Math.max(0, now - songStart); // ms since song started
+            const beatsElapsed = Math.floor(elapsed / bumpRate);
+            const beatTime = songStart + (beatsElapsed) * beatMs;
+
+            if (this.lastBump < beatTime) {
+                this.lastBump = beatTime;
+                this.bpmSpring.impulse(0.5)
+            }
+
+        }
+
         const ctx = this.canvas.getContext('2d');
         ctx.canvas.width  = 1920;
         ctx.canvas.height = 1080;
@@ -38,6 +67,9 @@ export class Render {
 
         const dt = now - this.lastRender;
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        ctx.fillStyle = "#87CEEB";
+        ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         const scale = (this.zoomSpring.getPosition() + 1);
         const cx = this.canvas.width / 2;
@@ -57,13 +89,12 @@ export class Render {
         this.game.gameObjects.forEach(element => {
             // Reset transform to identity, then apply centering+scaling per-frame
             ctx.setTransform(1,0,0,1,0,0);
+            ctx.globalAlpha = 1.0;
 
             // apply zoom around the mirrored mouse origin
             ctx.translate(originX, originY);
             ctx.scale(scale, scale);
             ctx.translate(-originX, -originY);
-
-            element.render(dt);
 
             const posx = element.position.x;
             const posy = element.position.y;
@@ -93,13 +124,7 @@ export class Render {
 
             if (element.visible) { 
 
-                ctx.drawImage(
-                    element.element,
-                    element.position.x - (element.size.x * element.anchorPoint.x) + (element.size.x * element.spriteOffset.x),
-                    element.position.y - (element.size.y * element.anchorPoint.y) + (element.size.y * element.spriteOffset.y),
-                    element.size.x,
-                    element.size.y
-                );
+                element.render(dt, ctx);
 
             }
 
@@ -112,14 +137,34 @@ export class Render {
                     8
                 )
             }
-
-
-            // restore identity for next element (already done at start of loop)
         });
+
+        const uiScale = (this.bpmSpring.getPosition() + 1);
+
+
+        const uiCx = this.canvas.width / 2;
+        const uiCy = this.canvas.height / 2;
+
+
+
+        this.game.uiObjects.forEach((element) => {
+
+            ctx.setTransform(1,0,0,1,0,0);
+            ctx.globalAlpha = 1.0;
+
+            if (!element.static) {
+                ctx.translate(uiCx, uiCy);
+                ctx.scale(uiScale, uiScale);
+                ctx.translate(-uiCx, -uiCy);
+            }
+
+            element.render(dt, ctx);
+        })
+
+        // restore identity transform after drawing UI
+        ctx.setTransform(1,0,0,1,0,0);
 
         this.lastRender = now;
         requestAnimationFrame((s) => this.render(s), this.canvas);
     }
-
-
 }

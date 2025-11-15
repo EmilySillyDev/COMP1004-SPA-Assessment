@@ -2,6 +2,7 @@ import { Game } from "./engine.js";
 import { Vector2, getRandomInt } from "./math.js";
 import { Shotgun, Crosshair } from "./shotgun.js";
 import { Sprite } from "./sprite.js";
+import { FadeTextLabel, Frame, TextLabel } from "./ui.js";
 
 const game = new Game(false);
 
@@ -65,7 +66,8 @@ game.addTarget({
     "size": new Vector2(256, 256),
 
     "assets": {
-        "images": ["images/target.png"]
+        "images": ["images/target.png"],
+        "killsound": "audio/shatter.wav"
     },
         
     "targetProps": {
@@ -77,6 +79,14 @@ game.addTarget({
 
 game.addLevel({
     "name": "endless",
+
+    "music": {
+        "src": "airwaves.wav",
+        "name": "AIRWAVES",
+        "author": "Toby Fox",
+        "bpm": 140,
+    },
+
     "targets": [
         {
             "type": "Cat",
@@ -102,6 +112,7 @@ game.addLevel({
 
 game.addLevel({
     "name": "menu",
+
     "targets": [
         {
             "type": "StartTarget",
@@ -116,6 +127,46 @@ game.addLevel({
 
 game.start();
 game.loadLevel("menu")
+
+const welcomeLabel = new FadeTextLabel();
+welcomeLabel.text = "Shoot the Target to Start!";
+
+const targetLabel = new TextLabel();
+targetLabel.position = new Vector2(96, 996)
+targetLabel.text = function(){
+    return `Targets Hit: ${game.targetsHit}`;
+};
+
+const comboLabel = new TextLabel();
+comboLabel.position = new Vector2(96, 996 - comboLabel.fontSize - 16)
+comboLabel.text = function(){
+    return `Combo: ${game.combo} (${Math.max(game.combo, game.highestCombo)})`;
+};
+
+const missLabel = new TextLabel();
+missLabel.position = new Vector2(1920 - 96, 996)
+missLabel.textAlign = "right";
+missLabel.text = function(){
+    return `Misses: ${game.escaped}`;
+};
+
+const cat = new Sprite(
+    "assets/images/cats/rarecat.png",
+    new Vector2(128, 128),
+    new Vector2(164, 160),
+    100
+)
+
+cat.frameSize = new Vector2(82, 80);
+cat.animated = true;
+cat.animationDelay = 30;
+cat.animationFrames = 29;
+cat.atlasWidth = 5;
+game.addElement(cat);
+game.addUiElement(welcomeLabel);
+game.addUiElement(targetLabel);
+game.addUiElement(comboLabel);
+game.addUiElement(missLabel);
 
 // setInterval(function() {
 //     const c = new Cat(new Vector2(0, 512), 256);
