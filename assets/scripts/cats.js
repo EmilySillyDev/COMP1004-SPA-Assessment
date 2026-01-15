@@ -16,9 +16,13 @@ export class Cat extends PhysicsSprite {
 
         // this.gravity = 0.5;
         this.die = new Audio("assets/audio/killsound.wav");
-        this.die.volume = 1;
         this.alive = true;
         this.catIdx = catIdx;
+    }
+
+    added() {
+        super.added()
+        this.die.volume = 1 * this.game.sfxVolume;
     }
 
     onMouseClick(mousePos) {

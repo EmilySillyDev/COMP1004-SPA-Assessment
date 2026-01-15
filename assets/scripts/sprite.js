@@ -32,6 +32,7 @@ export class Sprite {
         this.atlasWidth = 0;
     }
 
+    added() {}
     setGame(g) { this.game = g; }
     isASprite() { return true; }
     onMouseClick() {}

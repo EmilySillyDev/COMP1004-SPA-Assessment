@@ -28,11 +28,9 @@ export class Shotgun extends Sprite {
         // Two audio instances to allow for overlapping fire sounds
         this.shootAudio = new Audio("assets/audio/shoot.wav");
         this.shootAudio.preservesPitch = false;
-        this.shootAudio.volume = 0.3;
 
         this.shootAudio2 = new Audio("assets/audio/shoot.wav");
         this.shootAudio2.preservesPitch = false;
-        this.shootAudio2.volume = 0.3
 
         // Hooks's law spring, allows for convincing recoil effect
         this.spring = new Spring();
@@ -48,6 +46,12 @@ export class Shotgun extends Sprite {
         // Also increases with a higher combo
         this.breathTimer = 0;
         this.breathingRate = 1;
+    }
+
+    added() {
+        super.added();
+        this.shootAudio.volume = 0.3 * this.game.sfxVolume;
+        this.shootAudio2.volume = 0.3 * this.game.sfxVolume;
     }
 
     update(dt, mousePos) {

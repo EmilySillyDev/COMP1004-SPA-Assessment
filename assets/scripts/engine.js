@@ -34,6 +34,8 @@ export class Game {
         this.lyricTiming = 0;
 
         this.musicTiming = 0;
+        this.musicVolume = 0.5;
+        this.sfxVolume = 0.5;
     }
 
     getCurrentLyric() {
@@ -252,6 +254,7 @@ export class Game {
     addElement(element) {
         element.setGame(this);
         this.gameObjects.push(element);
+        element.added();
 
         this.gameObjects.sort((a, b) => {
             return a.zindex - b.zindex;
