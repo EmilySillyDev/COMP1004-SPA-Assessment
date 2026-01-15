@@ -31,6 +31,9 @@ export class Game {
 
         this.lyrics = [];
         this.lyricIndex = 0;
+        this.lyricTiming = 0;
+
+        this.musicTiming = 0;
     }
 
     getCurrentLyric() {
@@ -39,6 +42,11 @@ export class Game {
         const seconds = this.currentLevel.music2.currentTime;
         
         let currentLyric = "";
+
+        if (this.musicTiming < this.lyricTiming) {
+            this.lyricIndex = 0;
+            this.lyricTiming = 0;
+        }
 
         for (let i = this.lyricIndex; i < this.lyrics.length; i++) {
             const value = this.lyrics[i];
@@ -50,7 +58,8 @@ export class Game {
             }
 
             currentLyric = lyric;
-            this.lyricIndex = i
+            this.lyricIndex = i;
+            this.lyricTiming = reqSecs;
         }
 
         return currentLyric;
@@ -213,6 +222,8 @@ export class Game {
                 this.gameObjects.splice(idx, 1);
             }
         });
+
+        this.musicTiming = this.currentLevel?.music2?.currentTime || 0;
 
         this.renderer.render(now);
         requestAnimationFrame((n) => {this.gameLoop(n)});
