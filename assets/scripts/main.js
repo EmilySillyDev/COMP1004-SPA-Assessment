@@ -111,7 +111,7 @@ game.addLevel({
             ["TAKE IT TO THE FACE", 21.402],
             ["AY LIL BITCH COME LOOK AT ALL THESE PLAYS", 22.304],
             ["THAT THE GREMLIN MADE", 23.824],
-            ["FUCKIN' UP THE STUDY", 24.824],
+            ["FUCKIN' UP THE 'STUDI", 24.824],
             ["WHERE I SAY", 25.7],
             ["ALL THE THINGS YOU HATE", 26.453],
             ["FUCKBOY MAD THAT BROKIE GETTIN' PAID", 27.4],
