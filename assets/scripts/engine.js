@@ -28,6 +28,38 @@ export class Game {
         this.musicStart = 0;
         this.bpm = 0;
         this.bumpIntensity = 0;
+
+        this.lyrics = [];
+        this.lyricIndex = 0;
+    }
+
+    getCurrentLyric() {
+        if (this.lyrics.length === 0) return "";
+        if (!this.currentLevel.music2) return "waa";
+        const seconds = this.currentLevel.music2.currentTime;
+        
+        let currentLyric = "";
+
+        for (let i = this.lyricIndex; i < this.lyrics.length; i++) {
+            const value = this.lyrics[i];
+            const lyric = value[0];
+            const reqSecs = value[1];
+
+            if (seconds < reqSecs) {
+                break;
+            }
+
+            currentLyric = lyric;
+            this.lyricIndex = i
+        }
+
+        return currentLyric;
+
+    }
+
+    setLyrics(lyrics) {
+        this.lyrics = lyrics;
+        this.lyricIndex = 0;
     }
 
     announceGamemode() {

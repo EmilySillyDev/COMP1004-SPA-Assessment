@@ -90,11 +90,44 @@ game.addTarget({
 game.addLevel({
     "name": "endless",
 
+    // "music": {
+    //     "src": "airwaves.wav",
+    //     "name": "AIRWAVES",
+    //     "author": "Toby Fox",
+    //     "bpm": 140,
+    // },
+
     "music": {
-        "src": "airwaves.wav",
-        "name": "AIRWAVES",
-        "author": "Toby Fox",
-        "bpm": 140,
+        "src": "Meow Colon Three - Intro.ogg",
+        "name": "Meow Colon Three",
+        "author": "SuzuDumb",
+        "bpm": 189 / 2,
+
+        "loopSrc": "Meow Colon Three - Loop.ogg",
+        "loopBPM": 189,
+
+        "lyrics": [
+            ["GRAB THE WHOLE EIGHTH", 20.402],
+            ["TAKE IT TO THE FACE", 21.402],
+            ["AY LIL BITCH COME LOOK AT ALL THESE PLAYS", 22.304],
+            ["THAT THE GREMLIN MADE", 23.824],
+            ["FUCKIN' UP THE STUDY", 24.824],
+            ["WHERE I SAY", 25.7],
+            ["ALL THE THINGS YOU HATE", 26.453],
+            ["FUCKBOY MAD THAT BROKIE GETTIN' PAID", 27.4],
+            ["YEAH I'M MAKIN' CHANGE", 29.0],
+            ["(WOO)", 30.22],
+            ["I'M IN A CAGE LIKE ITS MMA", 30.6],
+            ["ALL THESE FUCKIN' PUSSIES ON MY DICK", 32.43],
+            ["IMMA LET EM' HANG", 34.068],
+            ["HOTTEST MOTHERFUCKER IN THE CRIB", 35],
+            ["SWEAR THAT SHIT ON GANG", 36.525],
+            ["I KNOW YOU MET YO BITCHES ON MY DICK", 37.554],
+            ["IMMA LEAVE HER GAPED", 39.072],
+            ["OPEN ON MY", 40.064],
+            ["COUCH", 40.770],
+            ["", 43]
+        ]
     },
 
     "targets": [
@@ -163,8 +196,19 @@ missLabel.text = function(){
     return `Misses: ${game.escaped}`;
 };
 
+const lyricLabel = new TextLabel();
+lyricLabel.position = new Vector2(1920 / 2, 800);
+lyricLabel.textAlign = "center";
+lyricLabel.fontColour = "rgb(255, 32, 32)"
+lyricLabel.static = true;
+lyricLabel.bold = true;
+lyricLabel.text = function() {
+    return game.getCurrentLyric();
+}
+
 game.addUiElement(welcomeLabel);
 game.addUiElement(targetLabel);
 game.addUiElement(comboLabel);
 game.addUiElement(missLabel);
 game.addUiElement(fpsCounter);
+game.addUiElement(lyricLabel)

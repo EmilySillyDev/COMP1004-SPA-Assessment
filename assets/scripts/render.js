@@ -52,7 +52,7 @@ export class Render {
             const beatTime = songStart + beatsElapsed * msPerBeat;
             if (this.lastBump < beatTime) {
                 this.lastBump = beatTime;
-                this.bpmSpring.impulse(0.5);
+                this.bpmSpring.impulse(this.game.bumpIntensity);
             }
         }
 
