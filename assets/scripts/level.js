@@ -63,7 +63,7 @@ export class Level {
 
         if (levelInfo.music) {
             this.music = new Audio(`assets/audio/music/${levelInfo.music.src}`);
-            this.music.volume = 0.65;
+            this.music.volume = 0.45;
             this.music.autoplay = true;
             this.music.loop = levelInfo.music.loopSrc ? false : true;
             this.music.play();
@@ -83,7 +83,7 @@ export class Level {
                 }
 
                 this.music2 = new Audio(`assets/audio/music/${levelInfo.music.loopSrc}`);
-                this.music2.volume = 0.65;
+                this.music2.volume = 0.45;
                 this.music2.loop = true;
             }
 
