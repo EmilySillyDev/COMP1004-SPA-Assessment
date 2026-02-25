@@ -4,6 +4,8 @@ import { Vector2, getRandomInt } from "./math.js";
 import { Shotgun, Crosshair } from "./shotgun.js";
 import { FadeTextLabel, FPSCounter, TextLabel } from "./ui.js";
 
+import { LyricLabel } from "./music.js";
+
 const game = new Game(false);
 window.game = game;
 
@@ -217,15 +219,17 @@ missLabel.text = function(){
     return `Misses: ${game.escaped}`;
 };
 
-const lyricLabel = new TextLabel();
-lyricLabel.position = new Vector2(1920 / 2, 800);
-lyricLabel.textAlign = "center";
-lyricLabel.fontColour = "rgb(255, 32, 32)"
-lyricLabel.static = true;
-lyricLabel.bold = true;
-lyricLabel.text = function() {
-    return game.getCurrentLyric();
-}
+const lyricLabel = new LyricLabel();
+
+// const lyricLabel = new TextLabel();
+// lyricLabel.position = new Vector2(1920 / 2, 800);
+// lyricLabel.textAlign = "center";
+// lyricLabel.fontColour = "rgb(255, 32, 32)"
+// lyricLabel.static = true;
+// lyricLabel.bold = true;
+// lyricLabel.text = function() {
+//     return game.getCurrentLyric();
+// }
 
 game.addUiElement(welcomeLabel);
 game.addUiElement(targetLabel);
