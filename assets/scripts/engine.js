@@ -4,6 +4,7 @@ import { Level } from "./level.js";
 import { StaticTarget } from "./target.js";
 import { Sprite } from "./sprite.js";
 import { FadeTextLabel } from "./ui.js";
+import { LyricHandler } from "./music.js";
 
 export class Game {
     constructor(debug) {
@@ -29,7 +30,7 @@ export class Game {
         this.bpm = 0;
         this.bumpIntensity = 0;
 
-        this.lyrics = [];
+        this.lyrics = null;
         this.lyricIndex = 0;
         this.lyricTiming = 0;
 
@@ -39,38 +40,17 @@ export class Game {
     }
 
     getCurrentLyric() {
-        if (this.lyrics.length === 0) return "";
-        if (!this.currentLevel.music2) return "waa";
-        const seconds = this.currentLevel.music2.currentTime;
-        
-        let currentLyric = "";
-
-        if (this.musicTiming < this.lyricTiming) {
-            this.lyricIndex = 0;
-            this.lyricTiming = 0;
-        }
-
-        for (let i = this.lyricIndex; i < this.lyrics.length; i++) {
-            const value = this.lyrics[i];
-            const lyric = value[0];
-            const reqSecs = value[1];
-
-            if (seconds < reqSecs) {
-                break;
-            }
-
-            currentLyric = lyric;
-            this.lyricIndex = i;
-            this.lyricTiming = reqSecs;
-        }
-
-        return currentLyric;
-
+        if (this.lyrics === null) return "";
+        return this.lyrics.getCurrentLyric();
     }
 
-    setLyrics(lyrics) {
-        this.lyrics = lyrics;
-        this.lyricIndex = 0;
+    setLyrics(lyrics, track) {
+
+        if (this.lyrics) {
+            delete this.lyrics;
+        }
+
+        this.lyrics = new LyricHandler(lyrics, track);
     }
 
     announceGamemode() {
@@ -117,7 +97,6 @@ export class Game {
 
         if (target) return target
         throw new Error(`Target of name ${targetName} doesn't exist`)
-        
     }
 
     addLevel(level) {
@@ -154,23 +133,6 @@ export class Game {
 
         const lvlObj = new Level(this, levelName, level);
         this.currentLevel = lvlObj;
-
-        // if (levelName == "endless") {
-        //     const cat = new Sprite(
-        //         "assets/images/cats/rarecat.png",
-        //         new Vector2(128, 128),
-        //         new Vector2(164, 160),
-        //         100
-        //     )
-
-        //     cat.frameSize = new Vector2(82, 80);
-        //     cat.animated = true;
-        //     cat.animationDelay = 30;
-        //     cat.animationFrames = 29;
-        //     cat.atlasWidth = 5;
-
-        //     this.addElement(cat);
-        // }
 
         this.announceGamemode();
     }

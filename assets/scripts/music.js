@@ -11,7 +11,7 @@ export class LyricLabel extends TextLabel {
         this.bold = true;
 
         this.text = () => {
-            return this.game.lyrics.getCurrentLyric()
+            return this.game.getCurrentLyric();
         }
     }
 
@@ -29,10 +29,34 @@ export class LyricHandler {
     }
 
     getCurrentLyric() {
-        return "no lyric :(";
+        if (this.lyrics === null) return "";
+        if (this.lyrics.length === 0) return "";
+        if (!this.track) return "ERROR: NO TRACK, LYRICS LOADED";
+
+        const seconds = this.track.currentTime;
+        let currentLyric = "";
+
+        if (this.musicTiming < this.lyricTiming) {
+            this.lyricIndex = 0;
+            this.lyricTiming = 0;
+        }
+
+        for (let i = this.lyricIndex; i < this.lyrics.length; i++) {
+            const value = this.lyrics[i];
+            const lyric = value[0];
+            const reqSecs = value[1];
+
+            if (seconds < reqSecs) {
+                break;
+            }
+
+            currentLyric = lyric;
+            this.lyricIndex = i;
+            this.lyricTiming = reqSecs;
+        }
+
+        return currentLyric;
     }
 
-    update(dt) {
-        const seconds = this.track.currentTime;
-    }
+    update(dt) {}
 }

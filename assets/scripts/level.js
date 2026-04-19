@@ -71,24 +71,24 @@ export class Level {
             if (levelInfo.music.loopSrc) {
 
                 let looped = false;
-                this.game.setLyrics(levelInfo.music.lyrics || []);
                 this.music.onended = (e) => {
                     if (looped) return;
                     looped = true;
                     this.music2.play()
-
+                    
                     if (levelInfo.music.loopBPM) {
                         this.game.setMusicBump(levelInfo.music.loopBPM, 1);
                     }
                 }
-
+                
                 this.music2 = new Audio(`assets/audio/music/${levelInfo.music.loopSrc}`);
                 this.music2.volume = 0.45 * this.game.musicVolume;
                 this.music2.loop = true;
+
+                this.game.setLyrics(levelInfo.music.lyrics || [], this.music2);
+            } else {
+                this.game.setLyrics(levelInfo.music.lyrics || [], this.music);
             }
-
-
-
 
             if (levelInfo.music.bpm) {
                 this.game.setMusicBump(levelInfo.music.bpm, 0.5);
