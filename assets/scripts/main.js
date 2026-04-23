@@ -91,7 +91,7 @@ game.addTarget({
 
 game.addLevel({
     "name": "endless",
-
+    // "playerHealth": 87231638671263,
     // "music": {
     //     "src": "airwaves.wav",
     //     "name": "AIRWAVES",
@@ -243,9 +243,6 @@ missLabel.text = function(){
     return `Misses: ${game.escaped}`;
 };
 
-const healthLabel = new HealthCounter();
-healthLabel.position = new Vector2(1920 - 96, 128)
-healthLabel.textAlign = "right";
 
 const lyricLabel = new LyricLabel();
 
@@ -265,4 +262,3 @@ game.addUiElement(comboLabel);
 game.addUiElement(missLabel);
 game.addUiElement(fpsCounter);
 game.addUiElement(lyricLabel)
-game.addUiElement(healthLabel)

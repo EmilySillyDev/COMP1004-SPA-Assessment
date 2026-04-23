@@ -3,8 +3,9 @@ import { Vector2 } from "./math.js";
 import { Level } from "./level.js";
 import { StaticTarget } from "./target.js";
 import { Sprite } from "./sprite.js";
-import { FadeTextLabel } from "./ui.js";
+import { FadeTextLabel, HealthCounter } from "./ui.js";
 import { LyricHandler } from "./music.js";
+import { UserSettings } from "./userdata.js";
 
 export class Game {
     constructor(debug) {
@@ -15,11 +16,13 @@ export class Game {
         this.targetsHit = 0;
         this.combo = 0;
         this.highestCombo = 0;
+        this.health = 0;
         this.escaped = 0;
         this.levels = [];
         this.targets = [];
         this.currentLevel = undefined;
         this.difficulty = "hard";
+        this.userSettings = new UserSettings();
 
         this.lastUpdate = performance.now();
         this.mouseDown = false;
@@ -35,7 +38,6 @@ export class Game {
         this.lyricTiming = 0;
 
         this.musicTiming = 0;
-        this.musicVolume = 0.5;
         this.sfxVolume = 0.5;
     }
 
@@ -50,7 +52,7 @@ export class Game {
             delete this.lyrics;
         }
 
-        this.lyrics = new LyricHandler(lyrics, censored, track);
+        this.lyrics = new LyricHandler(this, lyrics, censored, track);
     }
 
     announceGamemode() {
@@ -62,6 +64,9 @@ export class Game {
         label.textAlign = "right";
         label.position = new Vector2(1920 - 96, 128);
         this.addUiElement(label);
+
+        const healthLabel = new HealthCounter();
+        game.addUiElement(healthLabel)
     }
 
     addCombo() {
@@ -74,6 +79,16 @@ export class Game {
         }
 
         this.combo = 0;
+    }
+
+    damagePlayer() {
+        if (this.health > 0) {
+            this.health -= 1;
+        }
+
+        if (this.health <= 0) {
+            this.unloadLevel();
+        }
     }
 
     setMusicBump(bpm, intensity) {
@@ -117,6 +132,9 @@ export class Game {
 
         this.currentLevel.unload();
         this.currentLevel = null;
+
+        this.setLyrics(null);
+        this.setMusicBump(null);
     }
 
     loadLevel(levelName) {
@@ -133,6 +151,7 @@ export class Game {
 
         const lvlObj = new Level(this, levelName, level);
         this.currentLevel = lvlObj;
+        this.health = lvlObj.playerHealth;
 
         this.announceGamemode();
     }

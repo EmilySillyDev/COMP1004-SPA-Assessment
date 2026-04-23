@@ -4,12 +4,12 @@ import { getRandomFloat, getRandomInt, Vector2 } from "./math.js";
 export function getTargetImage(targetInfo) {
     const assets = targetInfo.assets.images || ["images/missing.png"];
     const image = assets[getRandomInt(0, assets.length)];
-    return `assets/${image}`
+    return `/assets/${image}`
 }
 
 export async function loadTargetAsync(targetName) {
     try {
-        const response = fetch(`assets/targets/${targetName}.json`);
+        const response = fetch(`/assets/targets/${targetName}.json`);
         
         if (!response.ok) {
             throw new Error(`Unable to fetch target '${targetName}', Response: ${response.status}`);
@@ -58,10 +58,10 @@ export class StaticTarget extends Sprite {
         this.targetProps = targetInfo.targetProps
         this.alive = true;
 
-        this.dieSound = new Audio(`assets/${targetInfo.assets.killsound || "audio/killsound.wav"}`);
+        this.dieSound = new Audio(`/assets/${targetInfo.assets.killsound || "audio/killsound.wav"}`);
         this.dieSound.volume = 1;
 
-        this.damageSound = new Audio(`assets/audio/damage.wav`);
+        this.damageSound = new Audio(`/assets/audio/damage.wav`);
         this.damageSound.volume = 0.25;
     }
 
@@ -90,6 +90,7 @@ export class StaticTarget extends Sprite {
     escaped() {
         this.game.escaped++;
         this.game.resetCombo();
+        this.game.damagePlayer();
         this.damageSound.play();
         this.destroy();
     }

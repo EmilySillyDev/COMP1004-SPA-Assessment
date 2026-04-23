@@ -19,6 +19,8 @@ export class SpawningWave {
 
         this.targetInfo = this.level.game.getTarget(this.targetType);
         this.template = resolveTargetType(this.targetInfo.type);
+
+        this.activeTargets = [];
     }
 
     isActive() {
@@ -41,6 +43,17 @@ export class SpawningWave {
 
         t.initProps(this);
         this.level.loadSprite(t);
+        this.activeTargets.push(t);
+    }
+
+    stop() {
+        this.active = false;
+
+        this.activeTargets.forEach(element => {
+            element.destroy()
+        });
+
+        this.activeTargets = [];
     }
 
     update(dt) {
@@ -55,6 +68,7 @@ export class Level {
         this.game = game;
         this.name = name;
         this.noAnnounce = levelInfo.noAnnounce || false;
+        this.playerHealth = levelInfo.playerHealth || 20;
 
         this.levelInfo = levelInfo;
 
@@ -62,8 +76,8 @@ export class Level {
         this.spawners = [];
 
         if (levelInfo.music) {
-            this.music = new Audio(`assets/audio/music/${levelInfo.music.src}`);
-            this.music.volume = 0.45 * this.game.musicVolume;
+            this.music = new Audio(`/assets/audio/music/${levelInfo.music.src}`);
+            this.music.volume = 0.45 * (this.game.userSettings.getSetting("musVolume") / 100);
             this.music.autoplay = true;
             this.music.loop = levelInfo.music.loopSrc ? false : true;
             this.music.play();
@@ -81,8 +95,8 @@ export class Level {
                     }
                 }
                 
-                this.music2 = new Audio(`assets/audio/music/${levelInfo.music.loopSrc}`);
-                this.music2.volume = 0.45 * this.game.musicVolume;
+                this.music2 = new Audio(`/assets/audio/music/${levelInfo.music.loopSrc}`);
+                this.music2.volume = 0.45 * (this.game.userSettings.getSetting("musVolume") / 100);
                 this.music2.loop = true;
 
                 this.game.setLyrics(levelInfo.music.lyrics || [], levelInfo.music.censoredLyrics || {}, this.music2);
@@ -105,7 +119,22 @@ export class Level {
         })
     }
 
-    unload() {}
+    unload() {
+        this.spawners.forEach((element) => {
+            element.stop();
+        })
+
+        if (this.music) {
+            this.music.pause();
+            this.music.currentTime = 0;
+        }
+
+        if (this.music2) {
+            this.music2.pause();
+            this.music2.currentTime = 0;
+        }
+
+    }
 
 
     loadSprite(sprite) {

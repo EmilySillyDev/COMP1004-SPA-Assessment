@@ -21,13 +21,14 @@ export class LyricLabel extends TextLabel {
 }
 
 export class LyricHandler {
-    constructor(lyrics, censored, track) {
+    constructor(game, lyrics, censored, track) {
         this.lyricIndex = 0;
         this.lyricTiming = 0;
         this.lastSeconds = 0;
         this.lyrics = lyrics;
         this.censored = censored;
-        this.track = track
+        this.track = track;
+        this.game = game;
     }
 
     getCurrentLyric() {
@@ -48,7 +49,7 @@ export class LyricHandler {
             const reqSecs = value[1];
             let lyric = value[0];
 
-            if (this.censored && reqSecs in this.censored) {
+            if (this.game.userSettings.getSetting("censored") && this.censored && reqSecs in this.censored) {
                 lyric = this.censored[reqSecs]
             }
 

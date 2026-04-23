@@ -75,25 +75,27 @@ export class TextLabel extends UIBase {
 export class HealthCounter extends TextLabel {
     constructor() {
         super()
-        this.text = "999";
+        this.text = "0";
+        this.position = new Vector2(96 + 185, 128);
         this.fontSize = 48;
         this.size = new Vector2(256, 128);
         this.image = new Image(this.size.x, this.size.y);
-        this.image.src = "assets/images/health.png";
+        this.image.src = "/assets/images/health.png";
         this.image.classList.add("sprite");
+        this.textAlign = "right";
     }
 
     render(dt, ctx) {
         
         ctx.drawImage(
             this.image,
-            this.position.x - (this.size.x * 0.85) + (this.size.x * 0),
+            this.position.x - (this.size.x * 0.15) + (this.size.x * -0.7),
             this.position.y - (this.size.y * 0.685) + (this.size.y * 0),
             256,
             128
         );
         
-        this.text = `999`;
+        this.text = `${this.game.health}`;
         super.render(dt, ctx);
     }
 }
@@ -108,6 +110,7 @@ export class FPSCounter extends TextLabel {
         this.position = new Vector2(8, 16);
         this.lastFPSUpdate = undefined;
         this.updateRate = 50;
+        this.static = true;
     }
 
     render(dt, ctx) {
