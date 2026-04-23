@@ -21,10 +21,12 @@ export class LyricLabel extends TextLabel {
 }
 
 export class LyricHandler {
-    constructor(lyrics, track) {
+    constructor(lyrics, censored, track) {
         this.lyricIndex = 0;
         this.lyricTiming = 0;
+        this.lastSeconds = 0;
         this.lyrics = lyrics;
+        this.censored = censored;
         this.track = track
     }
 
@@ -43,8 +45,12 @@ export class LyricHandler {
 
         for (let i = this.lyricIndex; i < this.lyrics.length; i++) {
             const value = this.lyrics[i];
-            const lyric = value[0];
             const reqSecs = value[1];
+            let lyric = value[0];
+
+            if (this.censored && reqSecs in this.censored) {
+                lyric = this.censored[reqSecs]
+            }
 
             if (seconds < reqSecs) {
                 break;
@@ -58,5 +64,7 @@ export class LyricHandler {
         return currentLyric;
     }
 
-    update(dt) {}
+    update(dt) {
+        this.musicTiming = this.track?.currentTime || 0;
+    }
 }

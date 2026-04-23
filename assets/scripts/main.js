@@ -2,7 +2,7 @@ import { BackgroundElement, Cloud } from "./aesthetics.js";
 import { Game } from "./engine.js";
 import { Vector2, getRandomInt } from "./math.js";
 import { Shotgun, Crosshair } from "./shotgun.js";
-import { FadeTextLabel, FPSCounter, TextLabel } from "./ui.js";
+import { FadeTextLabel, FPSCounter, HealthCounter, TextLabel } from "./ui.js";
 
 import { LyricLabel } from "./music.js";
 
@@ -107,6 +107,30 @@ game.addLevel({
 
         "loopSrc": "Meow Colon Three - Loop.ogg",
         "loopBPM": 189,
+
+        "censoredLyrics": {
+            [22.304]: "AY LIL ##### COME LOOK AT THESE PLAYS",
+            [24.824]: "####### UP THE STUDI'",
+            [27.4]: "####BOY MAD THAT BROKIE GETTIN' PAID",
+            [32.43]: "ALL THESE ####### PUSSIES ON MY ####",
+            [35]: "HOTTEST MOTHER###### IN THE CRIB",
+            [36.525]: "SWEAR THAT #### ON GANG",
+            [37.554]: "I KNOW YOU MET YO ####### ON MY ####",
+            [39.072]: "",
+            [40.064]: "",
+            [40.770]: "",
+
+            [71.123 + 22.304]: "AY LIL ##### COME LOOK AT THESE PLAYS",
+            [71.123 + 24.824]: "####### UP THE STUDI'",
+            [71.123 + 27.4]: "####BOY MAD THAT BROKIE GETTIN' PAID",
+            [71.123 + 32.43]: "ALL THESE ####### PUSSIES ON MY ####",
+            [71.123 + 35]: "HOTTEST MOTHER###### IN THE CRIB",
+            [71.123 + 36.525]: "SWEAR THAT #### ON GANG",
+            [71.123 + 37.554]: "I KNOW YOU MET YO ####### ON MY ####",
+            [71.123 + 39.072]: "",
+            [71.123 + 40.064]: "",
+            [71.123 + 40.770]: ""
+        },
 
         "lyrics": [
             ["GRAB THE WHOLE EIGHTH", 20.402],
@@ -219,6 +243,10 @@ missLabel.text = function(){
     return `Misses: ${game.escaped}`;
 };
 
+const healthLabel = new HealthCounter();
+healthLabel.position = new Vector2(1920 - 96, 128)
+healthLabel.textAlign = "right";
+
 const lyricLabel = new LyricLabel();
 
 // const lyricLabel = new TextLabel();
@@ -237,3 +265,4 @@ game.addUiElement(comboLabel);
 game.addUiElement(missLabel);
 game.addUiElement(fpsCounter);
 game.addUiElement(lyricLabel)
+game.addUiElement(healthLabel)

@@ -72,6 +72,33 @@ export class TextLabel extends UIBase {
     }
 }
 
+export class HealthCounter extends TextLabel {
+    constructor() {
+        super()
+        this.text = "999";
+        this.fontSize = 48;
+        this.size = new Vector2(256, 128);
+        this.image = new Image(this.size.x, this.size.y);
+        this.image.src = "assets/images/health.png";
+        this.image.classList.add("sprite");
+    }
+
+    render(dt, ctx) {
+        
+        ctx.drawImage(
+            this.image,
+            this.position.x - (this.size.x * 0.85) + (this.size.x * 0),
+            this.position.y - (this.size.y * 0.685) + (this.size.y * 0),
+            256,
+            128
+        );
+        
+        this.text = `999`;
+        super.render(dt, ctx);
+    }
+}
+
+
 export class FPSCounter extends TextLabel {
     constructor() {
         super();

@@ -85,9 +85,9 @@ export class Level {
                 this.music2.volume = 0.45 * this.game.musicVolume;
                 this.music2.loop = true;
 
-                this.game.setLyrics(levelInfo.music.lyrics || [], this.music2);
+                this.game.setLyrics(levelInfo.music.lyrics || [], levelInfo.music.censoredLyrics || {}, this.music2);
             } else {
-                this.game.setLyrics(levelInfo.music.lyrics || [], this.music);
+                this.game.setLyrics(levelInfo.music.lyrics || [], levelInfo.music.censoredLyrics || {}, this.music);
             }
 
             if (levelInfo.music.bpm) {

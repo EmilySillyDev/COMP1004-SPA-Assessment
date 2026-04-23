@@ -44,13 +44,13 @@ export class Game {
         return this.lyrics.getCurrentLyric();
     }
 
-    setLyrics(lyrics, track) {
+    setLyrics(lyrics, censored, track) {
 
         if (this.lyrics) {
             delete this.lyrics;
         }
 
-        this.lyrics = new LyricHandler(lyrics, track);
+        this.lyrics = new LyricHandler(lyrics, censored, track);
     }
 
     announceGamemode() {
@@ -187,8 +187,7 @@ export class Game {
             }
         });
 
-        this.musicTiming = this.currentLevel?.music2?.currentTime || 0;
-
+        this.lyrics?.update(dt);
         this.renderer.render(now);
         requestAnimationFrame((n) => {this.gameLoop(n)});
     };
