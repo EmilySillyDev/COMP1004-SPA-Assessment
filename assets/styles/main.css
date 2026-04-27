@@ -4,39 +4,97 @@
     --sky-colour: #87CEEB;
 }
 
+html, body {
+    background-color: #f1f1f1;
+}
+
 * {
-    box-sizing: content-box;
+    box-sizing: border-box;
     border: 0px;
     margin: 0px;
     padding: 0px;
 }
 
-html, body {
-    width: 100vw;
-    height: 100vh;
-    /* overflow: scroll; */
-
-    background-color: #000;
-}
-
-.press-start-2p-regular {
-  font-family: "Press Start 2P", system-ui;
-  font-weight: 400;
-  font-style: normal;
-}
-
-
-.render-canvas {
-    position: absolute;
-    width: auto;
-    height: 100%;
-    aspect-ratio: 16/9;
-    cursor: none;
-}
-
-#canvas-container {
-    display: flex;
+.page-content {
+    margin-top: 4vw;
+    padding: 16px;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    display: flex;
+}
+
+.showcase-item {
+    width: 25em;
+}
+
+main > section {
+    width: 75vw;
+    padding: 32px;
+    background-color: #fafafa;
+    border: 1px #232323 solid;
+    margin-bottom: 16px;
+    border-radius: 0.25em;
+}
+
+.topbar {
+    padding: 16px;
+}
+
+.play-section {
+    display: flex;
+}
+
+.play-section > div {
+    padding-left: 32px;
+}
+
+button {
+    color: #333333;
+}
+
+#play-button {
+    display: inline-flex;
+    font-size: 24px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    padding: 6px;
+    border: 2px #ffaa00 solid;
+    border-left: 16px #ffaa00 solid;
+    background-color: transparent;
+    box-shadow: 4px 4px 0px #cecece;
+}
+
+#play-button:hover {
+    background-color: #ffaa00;
+    color: #fff
+}
+
+#settings-button {
+    display: inline-flex;
+    font-size: 24px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    padding: 6px;
+    height: 48px;
+    width: 48px;
+    border: 2px #a0a0a0 solid;
+    background-color: transparent;
+    box-shadow: 4px 4px 0px #cecece;
+}
+
+#settings-button:hover {
+    background-color: #a0a0a0;
+    color: #fff;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+img { 
+    border: 1px #b1b1b1 solid;
+    border-radius: 0.25em;
 }
