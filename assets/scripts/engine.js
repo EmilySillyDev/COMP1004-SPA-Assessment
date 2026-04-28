@@ -1,9 +1,11 @@
+import { BackgroundElement, Cloud } from "./aesthetics.js";
 import { Render } from "./render.js";
 import { Vector2 } from "./math.js";
 import { Level } from "./level.js";
 import { StaticTarget } from "./target.js";
 import { Sprite } from "./sprite.js";
-import { FadeTextLabel, HealthCounter } from "./ui.js";
+import { Shotgun, Crosshair } from "./shotgun.js";
+import { FadeTextLabel, HealthCounter, FPSCounter, TextLabel } from "./ui.js";
 import { LyricHandler } from "./music.js";
 import { UserSettings } from "./userdata.js";
 
@@ -19,7 +21,9 @@ export class Game {
         this.health = 0;
         this.escaped = 0;
         this.levels = [];
+
         this.targets = [];
+
         this.currentLevel = undefined;
         this.difficulty = "hard";
         this.userSettings = new UserSettings();
@@ -39,6 +43,31 @@ export class Game {
 
         this.musicTiming = 0;
         this.sfxVolume = 0.5;
+
+        this.setUpGame();
+    }
+
+    setUpGame() {
+        this.addElement(new BackgroundElement(
+            "/assets/images/hills.png",
+            new Vector2(960, 540),
+            new Vector2(1920 * 1.1, 1080 * 1.1),
+            1
+        ));
+
+        const clouds = [
+            new Cloud(new Vector2(-278, 128), new Vector2(556, 187), 3, 100),
+            new Cloud(new Vector2(850, 196), new Vector2(556, 200).multiplyScalar(0.85), 2, 75, new Vector2(-278 * 0.85, 196)),
+            new Cloud(new Vector2(1500, 196), new Vector2(556, 200).multiplyScalar(1.25), 4, 50, new Vector2(-278 * 1.25, 196)),
+            new Cloud(new Vector2(1200, 220), new Vector2(556, 187), 3, 100, new Vector2(-278, 220))
+        ]
+        
+        clouds.forEach((c) => {
+            this.addElement(c);
+        })
+        
+        this.addElement(new Shotgun(256));
+        this.addElement(new Crosshair(96));
     }
 
     getCurrentLyric() {
@@ -66,7 +95,7 @@ export class Game {
         this.addUiElement(label);
 
         const healthLabel = new HealthCounter();
-        game.addUiElement(healthLabel)
+        this.addUiElement(healthLabel)
     }
 
     addCombo() {

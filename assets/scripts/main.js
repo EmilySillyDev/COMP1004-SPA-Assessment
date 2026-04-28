@@ -1,7 +1,6 @@
 import { BackgroundElement, Cloud } from "./aesthetics.js";
 import { Game } from "./engine.js";
 import { Vector2, getRandomInt } from "./math.js";
-import { Shotgun, Crosshair } from "./shotgun.js";
 import { FadeTextLabel, FPSCounter, HealthCounter, TextLabel } from "./ui.js";
 
 import { LyricLabel } from "./music.js";
@@ -9,95 +8,10 @@ import { LyricLabel } from "./music.js";
 const game = new Game(false);
 window.game = game;
 
-game.addElement(new BackgroundElement(
-    "/assets/images/hills.png",
-    new Vector2(960, 540),
-    new Vector2(1920 * 1.1, 1080 * 1.1),
-    1
-));
-
-const clouds = [
-    new Cloud(new Vector2(-278, 128), new Vector2(556, 187), 3, 100),
-    new Cloud(new Vector2(850, 196), new Vector2(556, 200).multiplyScalar(0.85), 2, 75, new Vector2(-278 * 0.85, 196)),
-    new Cloud(new Vector2(1500, 196), new Vector2(556, 200).multiplyScalar(1.25), 4, 50, new Vector2(-278 * 1.25, 196)),
-    new Cloud(new Vector2(1200, 220), new Vector2(556, 187), 3, 100, new Vector2(-278, 220))
-]
-
-clouds.forEach((c) => {
-    game.addElement(c);
-})
-
-game.addElement(new Shotgun(256));
-game.addElement(new Crosshair(96));
-    
-game.addTarget({
-    "name": "Target",
-    "type": "Static",
-    
-    "size": new Vector2(256, 256),
-
-    "assets": {
-        "images": ["images/target.png"]
-    },
-        
-    "targetProps": {
-        "spreadX": 1664,
-        "spreadY": 384
-    }
-})
-
-game.addTarget({
-    "name": "Cat",
-    "type": "Physics",
-    
-    "size": new Vector2(256, 256),
-
-    "assets": {
-        "images": [
-            "images/cats/cat1.png",
-            "images/cats/cat2.png",
-            "images/cats/cat3.png",
-            "images/cats/cat4.png",
-            "images/cats/cat5.png"
-        ]
-    },
-
-    "targetProps": {
-        "minVelX": 450,
-        "maxVelX": 850,
-        "minVelY": 750,
-        "maxVelY": 1250,
-        "gravity": 1
-    }
-})
-
-game.addTarget({
-    "name": "StartTarget",
-    "type": "Button",
-    
-    "size": new Vector2(256, 256),
-
-    "assets": {
-        "images": ["images/target.png"],
-        "killsound": "audio/shatter.wav"
-    },
-        
-    "targetProps": {
-        "spreadX": 0,
-        "spreadY": 0,
-        "level": "endless"
-    }
-})
+game.addTarget()
 
 game.addLevel({
     "name": "endless",
-    // "playerHealth": 87231638671263,
-    // "music": {
-    //     "src": "airwaves.wav",
-    //     "name": "AIRWAVES",
-    //     "author": "Toby Fox",
-    //     "bpm": 140,
-    // },
 
     "music": {
         "src": "Meow Colon Three - Intro.ogg",

@@ -1,12 +1,22 @@
 export const SETTINGS = {
     'censored': {
         Default: true,
-        Description: "Censored Lyrics"
+        Description: "Censored Lyrics",
+        Type: "boolean",
+    },
+
+    'lyricsVisible': {
+        Default: true,
+        Description: "Lyrics Visible",
+        Type: "boolean"
     },
 
     'musVolume': {
         Default: 50,
-        Description: "Music Volume"
+        Min: 0,
+        Max: 100,
+        Description: "Music Volume",
+        Type: "range",
     }
 }
 
