@@ -66,3 +66,10 @@ export class UserSettings {
         localStorage.setItem("settings", JSON.stringify(this.loadedSettings));
     }
 }
+
+export class SettingsInput {
+    constructor(element, settings) {
+        this.element = element;
+        this.settings = settings;
+    }
+}

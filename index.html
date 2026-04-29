@@ -26,9 +26,15 @@
                     <img class="showcase-item" src="/assets/images/game-screenshot.png" alt="A screenshot of the game, where the crosshair is pointed at two cats">
                     <div>
                         <h2>Play Cat Blasterz</h2>
+                        <p id="selected-map">Currently Selected: Endless (HARD)</p>
                         <br>
-                        <p>Currently Selected: Endless (HARD)</p>
+                        <h3> Spawning Difficulty </h3>
+                        <button class="difficulty-button" type="button" onclick="changeMap(null, 'easy')">Easy</button>
+                        <button class="difficulty-button" type="button" onclick="changeMap(null, 'normal')">Normal</button>
+                        <button class="difficulty-button" type="button" onclick="changeMap(null, 'hard')">Hard</button>
+                        <!-- <button class="difficulty-button" type="button" onclick="changeMap(null, 'impossible')">Literally Impossible...</button> -->
                         <br>
+                        <h3> You Ready?</h3>
                         <button type="button" id="play-button" onclick="startGame()">PLAY THE GAME</button>
                         <!-- <button type="button" id="settings-button"><i class="fa-solid fa-gear"></i></button> -->
                     </div>

@@ -6,11 +6,11 @@ import { StaticTarget } from "./target.js";
 import { Sprite } from "./sprite.js";
 import { Shotgun, Crosshair } from "./shotgun.js";
 import { FadeTextLabel, HealthCounter, FPSCounter, TextLabel } from "./ui.js";
-import { LyricHandler } from "./music.js";
+import { LyricHandler, LyricLabel } from "./music.js";
 import { UserSettings } from "./userdata.js";
 
 export class Game {
-    constructor(debug) {
+    constructor(settings, debug) {
         this.debug = debug
         this.renderer = new Render(this)
         this.gameObjects = [];
@@ -27,7 +27,7 @@ export class Game {
 
         this.currentLevel = undefined;
         this.difficulty = "hard";
-        this.userSettings = new UserSettings();
+        this.userSettings = settings;
 
         this.lastUpdate = performance.now();
         this.mouseDown = false;
@@ -132,10 +132,13 @@ export class Game {
             return `Whiffs: ${this.game.whiffs}`;
         };
 
+        const lyricLabel = new LyricLabel();
+
         this.addUiElement(whiffLabel);
         this.addUiElement(targetLabel);
         this.addUiElement(comboLabel);
         this.addUiElement(missLabel);
+        this.addUiElement(lyricLabel);
     }
 
     addCombo() {
@@ -210,7 +213,11 @@ export class Game {
         this.setMusicBump(null);
     }
 
-    loadLevel(levelName) {
+    loadLevel(levelName, difficulty) {
+
+        // difficulty = difficulty || "hard";
+        this.difficulty = difficulty || "hard";
+
         const level = this.levels.find((l) => {
             return l.name == levelName;
         })

@@ -1,5 +1,6 @@
 import { Vector2, getRandomInt } from "./math.js"
 import { resolveTargetType } from "./target.js";
+import { AVAILABLE_TRACKS } from "./music.js";
 
 export class SpawningWave { 
     constructor(level, spawnInfo) {
@@ -109,14 +110,20 @@ export class Level {
             }
         }
 
-        this.levelInfo.targets.forEach((spawnInfo) => {
-            const spawner = new SpawningWave(
-                this,
-                spawnInfo
-            )
+        const targets = this.levelInfo.targets[this.game.difficulty] || this.levelInfo.targets["hard"];
 
-            this.spawners.push(spawner);
-        })
+        if (targets) {
+            targets.forEach((spawnInfo) => {
+                const spawner = new SpawningWave(
+                    this,
+                    spawnInfo
+                )
+
+                this.spawners.push(spawner);
+            })
+        }
+
+
     }
 
     unload() {
@@ -161,3 +168,117 @@ export class Level {
         })
     }
 }
+
+export const AVAILABLE_LEVELS = [
+    {
+        "name": "menu",
+        "noAnnounce": true,
+
+        "targets": {
+            hard: [
+                {
+                    "type": "StartTarget",
+                    "xPos": 960,
+                    "yPos": 512,
+                    "count": 1,
+                    "flipped": false,
+                    "spawnDelay": 0,
+                }
+            ]
+        }
+    },
+
+    {
+        "name": "endless",
+        "music": AVAILABLE_TRACKS["MEOW"],
+        "targets": {
+            impossible: [
+                {
+                    "type": "Cat",
+                    "xPos": -256,
+                    "yPos": 800,
+                    "count": -1,
+                    "flipped": false,
+                    "spawnDelay": 400,
+                    "spawnDelayDeviation": 100
+                },
+        
+                {
+                    "type": "Cat",
+                    "xPos": 1920 + 256,
+                    "yPos": 800,
+                    "count": -1,
+                    "flipped": true,
+                    "spawnDelay": 400,
+                    "spawnDelayDeviation": 100
+                }
+            ],
+
+            hard: [
+                {
+                    "type": "Cat",
+                    "xPos": -256,
+                    "yPos": 800,
+                    "count": -1,
+                    "flipped": false,
+                    "spawnDelay": 750,
+                    "spawnDelayDeviation": 150
+                },
+        
+                {
+                    "type": "Cat",
+                    "xPos": 1920 + 256,
+                    "yPos": 800,
+                    "count": -1,
+                    "flipped": true,
+                    "spawnDelay": 750,
+                    "spawnDelayDeviation": 150
+                }
+            ],
+
+            normal: [
+                                {
+                    "type": "Cat",
+                    "xPos": -256,
+                    "yPos": 800,
+                    "count": -1,
+                    "flipped": false,
+                    "spawnDelay": 1250,
+                    "spawnDelayDeviation": 150
+                },
+        
+                {
+                    "type": "Cat",
+                    "xPos": 1920 + 256,
+                    "yPos": 800,
+                    "count": -1,
+                    "flipped": true,
+                    "spawnDelay": 1250,
+                    "spawnDelayDeviation": 150
+                }
+            ],
+
+            easy: [
+                                {
+                    "type": "Cat",
+                    "xPos": -256,
+                    "yPos": 800,
+                    "count": -1,
+                    "flipped": false,
+                    "spawnDelay": 2000,
+                    "spawnDelayDeviation": 150
+                },
+        
+                {
+                    "type": "Cat",
+                    "xPos": 1920 + 256,
+                    "yPos": 800,
+                    "count": -1,
+                    "flipped": true,
+                    "spawnDelay": 2000,
+                    "spawnDelayDeviation": 150
+                }
+            ]
+        }
+    }
+];

@@ -3,9 +3,15 @@ import { Game } from "./engine.js";
 import { Vector2, getRandomInt } from "./math.js";
 import { Shotgun, Crosshair } from "./shotgun.js";
 import { FadeTextLabel, FPSCounter, HealthCounter, TextLabel } from "./ui.js";
-import { AVAILABLE_TRACKS, LyricLabel } from "./music.js";
+import { LyricLabel } from "./music.js";
+import { AVAILABLE_LEVELS } from "./level.js";
+import { UserSettings } from "./userdata.js";
 
 let game;
+let targetMap;
+let targetDifficulty;
+
+const settings = new UserSettings();
 
 const DEFAULT_TARGETS = [
     {
@@ -50,48 +56,6 @@ const DEFAULT_TARGETS = [
     },
 ]
 
-const ENDLESS = {
-    "name": "endless",
-    "music": AVAILABLE_TRACKS["MEOW"],
-    "targets": [
-        {
-            "type": "Cat",
-            "xPos": -256,
-            "yPos": 800,
-            "count": -1,
-            "flipped": false,
-            "spawnDelay": 750,
-            "spawnDelayDeviation": 150
-        },
-
-        {
-            "type": "Cat",
-            "xPos": 1920 + 256,
-            "yPos": 800,
-            "count": -1,
-            "flipped": true,
-            "spawnDelay": 750,
-            "spawnDelayDeviation": 150
-        }
-    ]
-}
-
-const MENU_LEVEL = {
-    "name": "menu",
-    "noAnnounce": true,
-
-    "targets": [
-        {
-            "type": "StartTarget",
-            "xPos": 960,
-            "yPos": 512,
-            "count": 1,
-            "flipped": false,
-            "spawnDelay": 0,
-        }
-    ]
-}
-
 function createStart(levelName, difficulty) {
     return {
         "name": "StartTarget",
@@ -125,15 +89,18 @@ function startGame() {
         throw Error("A game is already running.");
     }
 
-    game = new Game(false);
+    game = new Game(settings, false);
 
     DEFAULT_TARGETS.forEach((t) => {
         game.addTarget(t);
     });
 
-    game.addTarget(createStart("endless", "hard"));
-    game.addLevel(ENDLESS);
-    game.addLevel(MENU_LEVEL);
+    game.addTarget(createStart(targetMap, targetDifficulty));
+    
+    AVAILABLE_LEVELS.forEach((level) => {
+        game.addLevel(level);
+    })
+
     game.start();
     game.loadLevel("menu");
 
@@ -142,5 +109,25 @@ function startGame() {
     game.addUiElement(welcomeLabel);
 }
 
+function changeMap(mapName, difficulty) {
+    targetMap = mapName || targetMap;
+    targetDifficulty = difficulty || targetDifficulty;
+
+    const label = document.getElementById("selected-map");
+    if (label) {
+        const name = targetMap.charAt(0).toUpperCase() + targetMap.slice(1);
+        label.textContent = `Currently Selected: ${name} (${targetDifficulty.toUpperCase()})`
+    }
+
+}
+
+changeMap("endless", "normal");
+
 // Allows for use on onclick in HTML elements
 window.startGame = startGame;
+window.changeMap = changeMap;
+
+// Extra debugging, allows for console access
+// i.e. `getGame().debug = true;`
+window.getGame = () => { return game; }
+window.getSettings = () => { return settings; }

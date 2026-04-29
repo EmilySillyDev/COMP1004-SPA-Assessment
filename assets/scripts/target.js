@@ -146,9 +146,16 @@ export class PhysicsTarget extends StaticTarget {
 
 // Used for UI elements
 export class ButtonTarget extends StaticTarget {
+    constructor(targetInfo, position) {
+        super(targetInfo, position);
+        this.disableCombo = true;
+    }
+
     kill() {
-        super.kill();
-        console.log("waa", this.targetProps.level)
-        this.game.loadLevel(this.targetProps.level);
+        if (!this.alive) return;
+        this.alive = false;
+        this.dieSound.play();
+        this.destroy();
+        this.game.loadLevel(this.targetProps.level, this.targetProps.difficulty || "hard");
     }
 }

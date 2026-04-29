@@ -63,6 +63,7 @@ export class Shotgun extends Sprite {
     onMouseClick(mousePos) {
         const now = performance.now();
         if (now - this.lastShot < 200) { return; }
+        if (this.game.health <= 0) {return;}
 
         console.log(`Shotgun shot at X: ${this.target.x} Y: ${this.target.y}`)
         
@@ -70,7 +71,9 @@ export class Shotgun extends Sprite {
 
         targets.forEach(element => {
             element.kill();
-            this.game.addCombo();
+            if (!element.disableCombo) {
+                this.game.addCombo();
+            }
         });
 
         if (targets.length == 0) {
