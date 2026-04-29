@@ -17,6 +17,7 @@ export class Game {
         this.uiObjects = [];
         this.targetsHit = 0;
         this.combo = 0;
+        this.whiffs = 0;
         this.highestCombo = 0;
         this.health = 0;
         this.escaped = 0;
@@ -94,6 +95,14 @@ export class Game {
         label.position = new Vector2(1920 - 96, 128);
         this.addUiElement(label);
 
+
+                
+    }
+
+    showGameUI() {
+        if (!this.currentLevel) return;
+        if (this.currentLevel.noAnnounce) return;
+
         const healthLabel = new HealthCounter();
         this.addUiElement(healthLabel)
 
@@ -116,10 +125,17 @@ export class Game {
             return `Misses: ${this.game.escaped}`;
         };
 
+        const whiffLabel = new TextLabel();
+        whiffLabel.position = new Vector2(1920 - 96, 996 - whiffLabel.fontSize - 16);
+        whiffLabel.textAlign = "right";
+        whiffLabel.text = function(){
+            return `Whiffs: ${this.game.whiffs}`;
+        };
+
+        this.addUiElement(whiffLabel);
         this.addUiElement(targetLabel);
         this.addUiElement(comboLabel);
         this.addUiElement(missLabel);
-                
     }
 
     addCombo() {
@@ -132,6 +148,10 @@ export class Game {
         }
 
         this.combo = 0;
+    }
+
+    whiffShot() {
+        this.whiffs++;
     }
 
     damagePlayer() {
@@ -207,6 +227,7 @@ export class Game {
         this.health = lvlObj.playerHealth;
 
         this.announceGamemode();
+        this.showGameUI();
     }
 
     getTargetsAtPosition(position) {

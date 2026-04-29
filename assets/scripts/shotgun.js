@@ -75,6 +75,7 @@ export class Shotgun extends Sprite {
 
         if (targets.length == 0) {
             this.game.resetCombo();
+            this.game.whiffShot();
         }
 
         this.curShot += 1;
