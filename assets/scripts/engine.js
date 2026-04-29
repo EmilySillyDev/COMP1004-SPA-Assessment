@@ -96,6 +96,30 @@ export class Game {
 
         const healthLabel = new HealthCounter();
         this.addUiElement(healthLabel)
+
+        const targetLabel = new TextLabel();
+        targetLabel.position = new Vector2(96, 996)
+        targetLabel.text = function(){
+            return `Targets Hit: ${this.game.targetsHit}`;
+        };
+        
+        const comboLabel = new TextLabel();
+        comboLabel.position = new Vector2(96, 996 - comboLabel.fontSize - 16)
+        comboLabel.text = function(){
+            return `Combo: ${this.game.combo} (${Math.max(this.game.combo, this.game.highestCombo)})`;
+        };
+        
+        const missLabel = new TextLabel();
+        missLabel.position = new Vector2(1920 - 96, 996)
+        missLabel.textAlign = "right";
+        missLabel.text = function(){
+            return `Misses: ${this.game.escaped}`;
+        };
+
+        this.addUiElement(targetLabel);
+        this.addUiElement(comboLabel);
+        this.addUiElement(missLabel);
+                
     }
 
     addCombo() {

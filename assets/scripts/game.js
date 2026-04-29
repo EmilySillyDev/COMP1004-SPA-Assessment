@@ -212,4 +212,4 @@ function startGame() {
     game.addUiElement(welcomeLabel);
 }
 
-startGame();
+window.startGame = startGame;
