@@ -30,14 +30,14 @@ export class MovingBackgroundElement extends BackgroundElement {
 
 export class Cloud extends MovingBackgroundElement {
     constructor(position, size, zindex, speed, ogPos) {
-        super("/assets/images/cloud.png", position, size, zindex, speed, true, ogPos)
+        super("assets/images/cloud.png", position, size, zindex, speed, true, ogPos)
         this.static = true;
     }
 }
 
 export class ShotgunShell extends Sprite {
     constructor(position, size, zindex) {
-        super("/assets/images/shell.png", position, size, zindex);
+        super("assets/images/shell.png", position, size, zindex);
         this.velocity = new Vector2(0, 0);
         this.angularVelocity = 0;
         this.gravity = 2;

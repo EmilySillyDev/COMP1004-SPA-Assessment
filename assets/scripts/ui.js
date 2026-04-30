@@ -80,7 +80,7 @@ export class HealthCounter extends TextLabel {
         this.fontSize = 48;
         this.size = new Vector2(256, 128);
         this.image = new Image(this.size.x, this.size.y);
-        this.image.src = "/assets/images/health.png";
+        this.image.src = "assets/images/health.png";
         this.image.classList.add("sprite");
         this.textAlign = "right";
     }

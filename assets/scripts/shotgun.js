@@ -4,7 +4,7 @@ import { ShotgunShell } from "./aesthetics.js";
 
 export class Crosshair extends Sprite {
     constructor(size) {
-        super("/assets/images/crosshair.png", new Vector2(0, 0), new Vector2(size, size), 1);
+        super("assets/images/crosshair.png", new Vector2(0, 0), new Vector2(size, size), 1);
     }
 
     update(dt, mousePos) {
@@ -21,15 +21,15 @@ export class Crosshair extends Sprite {
 
 export class Shotgun extends Sprite {
     constructor(width) {
-        super("/assets/images/shotgun.png", new Vector2(0, 0), new Vector2(width, width / 162 * 295), 2);
+        super("assets/images/shotgun.png", new Vector2(0, 0), new Vector2(width, width / 162 * 295), 2);
         this.anchorPoint = new Vector2(0.5, 1.5);
         this.target = new Vector2(0, 0);
         
         // Two audio instances to allow for overlapping fire sounds
-        this.shootAudio = new Audio("/assets/audio/shoot.wav");
+        this.shootAudio = new Audio("assets/audio/shoot.wav");
         this.shootAudio.preservesPitch = false;
 
-        this.shootAudio2 = new Audio("/assets/audio/shoot.wav");
+        this.shootAudio2 = new Audio("assets/audio/shoot.wav");
         this.shootAudio2.preservesPitch = false;
 
         // Hooks's law spring, allows for convincing recoil effect
