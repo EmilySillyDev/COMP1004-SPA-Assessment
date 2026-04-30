@@ -39,9 +39,11 @@ export class UserSettings {
     import(imported) {
         for (const [key, value] of Object.entries(SETTINGS)) {
             if (imported[key] !== undefined) {
-                this.loadedSettings[key] = init[key];
+                this.loadedSettings[key] = imported[key];
             }
         }
+
+        localStorage.setItem("settings", JSON.stringify(this.loadedSettings));
     }
 
     export() {
@@ -65,15 +67,96 @@ export class UserSettings {
         this.loadedSettings[setting] = value;
         localStorage.setItem("settings", JSON.stringify(this.loadedSettings));
     }
+
+    importFromFile() {
+
+    }
 }
 
 export class SettingsInput {
     constructor(element, settings) {
         this.element = element;
         this.settings = settings;
+        this.selectedFile = null;
+        this.inputs = [];
 
         for (const [key, value] of Object.entries(SETTINGS)) {
             this.createFrame(key, value)
+        }
+
+        this.importInput = document.createElement("input");
+        this.importInput.type = "file";
+        this.importInput.accept = "application/json";
+        this.importInput.style.marginTop = "12px";
+        this.importInput.style.marginBottom = "8px";
+        this.importInput.style.marginLeft = "4px";
+
+        const self = this;
+
+        this.importInput.onchange = (e) => {
+            const files = e.target.files;
+            if (!files.length) {
+                alert("You must upload a file to import!");
+                return;
+            }
+
+            const file = files[0];
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                self.selectedFile = event.target.result;
+            };
+
+            reader.readAsText(file);
+        }
+
+        this.element.appendChild(this.importInput);
+        this.element.appendChild(document.createElement("br"))
+
+        this.importButton = document.createElement("button");
+        this.importButton.classList.add("difficulty-button")
+        this.importButton.type = "button"
+        this.importButton.onclick = () => this.importFromFile();
+        this.importButton.textContent = "IMPORT";
+        this.element.appendChild(this.importButton);
+
+        this.exportButton = document.createElement("button");
+        this.exportButton.classList.add("difficulty-button")
+        this.exportButton.type = "button"
+        this.exportButton.onclick = () => this.settings.export();
+        this.exportButton.textContent = "EXPORT";
+        this.element.appendChild(this.exportButton);
+    }
+
+    importFromFile() {
+        if (!this.selectedFile) {
+            alert("You must upload a file to import!");
+            return;
+        }
+
+        try {
+            this.settings.import(JSON.parse(this.selectedFile));
+            this.update();
+        } catch (e) {
+            alert("Failed to import settings! Make sure the file is valid.");
+            return;
+        }
+
+        this.importInput.value = "";
+        this.selectedFile = null;
+        alert("Settings imported successfully!");
+
+    }
+
+    update() {
+        for (const control of this.inputs) {
+            const value = this.settings.getSetting(control.settingId);
+
+            if (control.type === 'boolean') {
+                control.input.checked = value;
+            } else if (control.type === 'range') {
+                control.input.value = value;
+            }
         }
     }
 
@@ -98,6 +181,7 @@ export class SettingsInput {
                 })
 
                 container.appendChild(checkbox);
+                this.inputs.push({ settingId, input: checkbox, type: 'boolean' });
                 break;
 
             case 'range':
@@ -113,6 +197,7 @@ export class SettingsInput {
 
 
                 container.appendChild(range);
+                this.inputs.push({ settingId, input: range, type: 'range' });
                 break;
         }
 
