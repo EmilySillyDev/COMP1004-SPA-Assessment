@@ -77,7 +77,7 @@ export class Level {
         this.spawners = [];
 
         if (levelInfo.music) {
-            this.music = new Audio(`/assets/audio/music/${levelInfo.music.src}`);
+            this.music = new Audio(`assets/audio/music/${levelInfo.music.src}`);
             this.music.volume = 0.45 * (this.game.userSettings.getSetting("musVolume") / 100);
             this.music.autoplay = true;
             this.music.loop = levelInfo.music.loopSrc ? false : true;
@@ -96,7 +96,7 @@ export class Level {
                     }
                 }
                 
-                this.music2 = new Audio(`/assets/audio/music/${levelInfo.music.loopSrc}`);
+                this.music2 = new Audio(`assets/audio/music/${levelInfo.music.loopSrc}`);
                 this.music2.volume = 0.45 * (this.game.userSettings.getSetting("musVolume") / 100);
                 this.music2.loop = true;
 

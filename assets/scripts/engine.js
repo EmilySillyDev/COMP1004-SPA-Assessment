@@ -55,7 +55,7 @@ export class Game {
 
     setUpGame() {
         this.addElement(new BackgroundElement(
-            "/assets/images/hills.png",
+            "assets/images/hills.png",
             new Vector2(960, 540),
             new Vector2(1920 * 1.1, 1080 * 1.1),
             1

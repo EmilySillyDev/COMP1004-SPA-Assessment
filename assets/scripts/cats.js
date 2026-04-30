@@ -8,14 +8,14 @@ export class Cat extends PhysicsSprite {
         const catIdx = getRandomInt(1, 5);
 
         super(
-            `/assets/images/cats/cat${catIdx}.png`,
+            `assets/images/cats/cat${catIdx}.png`,
             position,
             new Vector2(size, size),
             0
         );
 
         // this.gravity = 0.5;
-        this.die = new Audio("/assets/audio/killsound.wav");
+        this.die = new Audio("assets/audio/killsound.wav");
         this.alive = true;
         this.catIdx = catIdx;
     }
