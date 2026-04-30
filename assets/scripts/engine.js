@@ -10,8 +10,13 @@ import { LyricHandler, LyricLabel } from "./music.js";
 import { UserSettings } from "./userdata.js";
 
 export class Game {
-    constructor(settings, debug) {
+    constructor(settings, endCallback, debug) {
         this.debug = debug
+        this.active = false;
+        this.endFlag = false;
+        this.endTimer = 5000;
+        this.endCallback = endCallback;
+
         this.renderer = new Render(this)
         this.gameObjects = [];
         this.uiObjects = [];
@@ -163,8 +168,23 @@ export class Game {
         }
 
         if (this.health <= 0) {
+            this.userDied();
             this.unloadLevel();
         }
+    }
+
+    userDied() {
+        const stats = {
+            Hits: this.targetsHit,
+            Whiffs: this.whiffs,
+            Misses: this.escaped,
+            HighestCombo: this.highestCombo
+        }
+
+        // We need to display these stats to the user.
+        // And then, after a few seconds, kill the game
+        this.endFlag = true;
+
     }
 
     setMusicBump(bpm, intensity) {
@@ -289,10 +309,26 @@ export class Game {
 
         this.lyrics?.update(dt);
         this.renderer.render(now);
-        requestAnimationFrame((n) => {this.gameLoop(n)});
+
+        if (this.endFlag) {
+            this.endTimer -= dt;
+            if (this.endTimer <= 0) {
+                this.stop();
+            }
+        }
+
+        if (this.active) {
+            requestAnimationFrame((n) => {this.gameLoop(n)});
+        }
     };
 
     start() {
+        if (this.active) {
+            throw Error("The game is already active.");
+        }
+
+        this.active = true;
+
         document.addEventListener("mousedown", (e) => {
             if (e.button != 0) {return;}
             this.mouseDown = true;
@@ -310,6 +346,21 @@ export class Game {
 
         this.lastUpdate = performance.now();
         requestAnimationFrame((n) => {this.gameLoop(n)});
+    }
+
+    stop() {
+        if (!this.active) return;
+        this.unloadLevel();
+
+        this.gameObjects.forEach((element) => {
+            element.destroy();
+        })
+
+        this.active = false;
+
+        if (this.endCallback) {
+            this.endCallback();
+        }
     }
 
     addElement(element) {

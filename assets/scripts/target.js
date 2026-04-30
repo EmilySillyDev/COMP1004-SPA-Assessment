@@ -114,17 +114,26 @@ export class PhysicsTarget extends StaticTarget {
 
     initProps(spawner) {
         /*
+        An example of targetProps (target properties)
+
         "minVelX": 350,
         "maxVelX": 650,
         "minVelY": 750,
         "maxVelY": 1000,
         "gravity": 1
+
         */
 
         const xVel = getRandomInt(this.targetProps.minVelX, this.targetProps.maxVelX) * (spawner.flipped ? -1 : 1);
         const yVel = -getRandomInt(this.targetProps.minVelY, this.targetProps.maxVelY);
         this.gravity = this.targetProps.gravity;
         this.velocity = new Vector2(xVel, yVel);
+
+        // Two random calls were used here
+        // The first one for Power, the second one for direction
+        // I didnt do getRandomFloat(-20, 20) as there's a chance there would be 0 rotation
+        // I want there to be a minimum bound to rotation, but in either direction
+        // Math.PI was used to help with Euler angles to degrees
         this.angularVelocity = getRandomFloat(10, 20) * Math.PI / 180 * (Math.random() > 0.5 ? -1 : 1);
 
     }

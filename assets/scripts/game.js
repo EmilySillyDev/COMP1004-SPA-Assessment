@@ -5,7 +5,7 @@ import { Shotgun, Crosshair } from "./shotgun.js";
 import { FadeTextLabel, FPSCounter, HealthCounter, TextLabel } from "./ui.js";
 import { LyricLabel } from "./music.js";
 import { AVAILABLE_LEVELS } from "./level.js";
-import { UserSettings } from "./userdata.js";
+import { SettingsInput, UserSettings } from "./userdata.js";
 
 let game;
 let targetMap;
@@ -77,6 +77,17 @@ function createStart(levelName, difficulty) {
     }
 }
 
+function endGame() {
+    game = undefined;
+
+    const gameContainer = document.getElementById("canvas-container");
+    if (!gameContainer) {
+        throw Error("Unable to find suitable game container");
+    }
+
+    gameContainer.classList.remove("active-game-container");
+}
+
 function startGame() {
     const gameContainer = document.getElementById("canvas-container");
     if (!gameContainer) {
@@ -89,7 +100,7 @@ function startGame() {
         throw Error("A game is already running.");
     }
 
-    game = new Game(settings, false);
+    game = new Game(settings, endGame, false);
 
     DEFAULT_TARGETS.forEach((t) => {
         game.addTarget(t);
@@ -121,7 +132,10 @@ function changeMap(mapName, difficulty) {
 
 }
 
-changeMap("endless", "normal");
+changeMap("endless", "normal"); // Default map settings
+
+const frame = document.getElementById("user-settings");
+const settingsInput = new SettingsInput(frame, settings); // allow for user input
 
 // Allows for use on onclick in HTML elements
 window.startGame = startGame;

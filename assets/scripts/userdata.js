@@ -71,5 +71,53 @@ export class SettingsInput {
     constructor(element, settings) {
         this.element = element;
         this.settings = settings;
+
+        for (const [key, value] of Object.entries(SETTINGS)) {
+            this.createFrame(key, value)
+        }
+    }
+
+    createFrame(settingId, setting) {
+        const container = document.createElement("div");
+        container.style.display = "flex";
+        container.style.margin = "8px";
+
+        const label = document.createElement("p");
+        label.textContent = setting.Description;
+        label.style.marginRight = "12px";
+        container.appendChild(label);
+
+        switch (setting.Type) {
+            case 'boolean':
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = this.settings.getSetting(settingId);
+
+                checkbox.addEventListener('change', (event) => {
+                    this.settings.changeSetting(settingId, event.currentTarget.checked)
+                })
+
+                container.appendChild(checkbox);
+                break;
+
+            case 'range':
+                const range = document.createElement("input");
+                range.type = "range";
+                range.min = setting.Min;
+                range.max = setting.Max;
+                range.value = this.settings.getSetting(settingId);
+
+                range.addEventListener('change', (event) => {
+                    this.settings.changeSetting(settingId, event.currentTarget.value);
+                })
+
+
+                container.appendChild(range);
+                break;
+        }
+
+
+
+        this.element.appendChild(container);
     }
 }

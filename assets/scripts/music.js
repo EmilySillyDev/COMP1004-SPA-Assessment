@@ -39,6 +39,10 @@ export class LyricHandler {
         const seconds = this.track.currentTime;
         let currentLyric = "";
 
+        if (!this.game.userSettings.getSetting("lyricsVisible")) {
+            return "";
+        }
+
         if (this.musicTiming < this.lyricTiming) {
             this.lyricIndex = 0;
             this.lyricTiming = 0;
