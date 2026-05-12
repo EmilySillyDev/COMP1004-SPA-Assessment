@@ -271,7 +271,13 @@ export class PerformanceDisplay {
     constructor(element, performance) {
         this.element = element;
         this.performance = performance;
-        this.display();
+
+        this.statContainer = document.createElement("div");
+        this.statContainer.style.display = "flex";
+        this.statContainer.style.flexDirection = "column";
+        this.statContainer.style.gap = "4px";
+        this.statContainer.style.marginLeft = "8px";
+        this.element.appendChild(this.statContainer);
 
         this.exportButton = document.createElement("button");
         this.exportButton.classList.add("difficulty-button")
@@ -279,21 +285,41 @@ export class PerformanceDisplay {
         this.exportButton.onclick = () => this.performance.export();
         this.exportButton.textContent = "EXPORT PERFORMANCE";
         this.element.appendChild(this.exportButton);
+
+        this.display();
     }
     
     display() {
         const data = this.performance.data;
         if (!data.lastUpdated) {
-            this.element.textContent = "No games played yet.";
+            this.statContainer.textContent = "No games played yet.";
+            this.exportButton.style.display = "none";
             return;
         }
 
         // Each stat shows the value and last updated time on hover (in local time)
-        this.element.innerHTML = `
-            <p title="Last Updated: ${new Date(data.highestComboUpdated).toLocaleString()}">Highest Combo: ${data.highestCombo}</p>
-            <p title="Last Updated: ${new Date(data.mostTargetsHitUpdated).toLocaleString()}">Most Targets Hit: ${data.mostTargetsHit}</p>
-            <p title="Last Updated: ${new Date(data.longestTimeSurvivedUpdated).toLocaleString()}">Longest Time Survived: ${Math.round(data.longestTimeSurvived * 100) / 100} seconds</p>
-            <p title="Last Updated: ${new Date(data.totalTargetsHitUpdated).toLocaleString()}">Total Targets Hit: ${data.totalTargetsHit}</p>
-        `;
+        this.statContainer.innerHTML = "";
+        this.exportButton.style.display = "block";
+
+        const combo = document.createElement("p");
+        combo.textContent = `Highest Combo: ${data.highestCombo}`;
+        combo.title = `Last Updated: ${new Date(data.highestComboUpdated).toLocaleString()}`;
+        this.statContainer.appendChild(combo);
+
+        const targetsHit = document.createElement("p");
+        targetsHit.textContent = `Most Targets Hit: ${data.mostTargetsHit}`;
+        targetsHit.title = `Last Updated: ${new Date(data.mostTargetsHitUpdated).toLocaleString()}`;
+        this.statContainer .appendChild(targetsHit);
+
+        const timeSurvived = document.createElement("p");
+        timeSurvived.textContent = `Longest Time Survived: ${Math.round(data.longestTimeSurvived * 100) / 100} seconds`;
+        timeSurvived.title = `Last Updated: ${new Date(data.longestTimeSurvivedUpdated).toLocaleString()}`;
+        this.statContainer.appendChild(timeSurvived);
+
+        const totalTargets = document.createElement("p");
+        totalTargets.textContent = `Total Targets Hit: ${data.totalTargetsHit}`;
+        totalTargets.title = `Last Updated: ${new Date(data.totalTargetsHitUpdated).toLocaleString()}`;
+        this.statContainer.appendChild(totalTargets);
+
     }
 }
