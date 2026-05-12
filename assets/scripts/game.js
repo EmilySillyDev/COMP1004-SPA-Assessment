@@ -5,13 +5,14 @@ import { Shotgun, Crosshair } from "./shotgun.js";
 import { FadeTextLabel, FPSCounter, HealthCounter, TextLabel } from "./ui.js";
 import { LyricLabel } from "./music.js";
 import { AVAILABLE_LEVELS } from "./level.js";
-import { SettingsInput, UserSettings } from "./userdata.js";
+import { SettingsInput, PerformanceDisplay, UserPerformance, UserSettings } from "./userdata.js";
 
 let game;
 let targetMap;
 let targetDifficulty;
 
 const settings = new UserSettings();
+const perfStats = new UserPerformance();
 
 const DEFAULT_TARGETS = [
     {
@@ -100,7 +101,7 @@ function startGame() {
         throw Error("A game is already running.");
     }
 
-    game = new Game(settings, endGame, false);
+    game = new Game(settings, perfStats, endGame, false);
 
     DEFAULT_TARGETS.forEach((t) => {
         game.addTarget(t);
@@ -137,6 +138,10 @@ changeMap("endless", "normal"); // Default map settings
 const frame = document.getElementById("user-settings");
 const settingsInput = new SettingsInput(frame, settings); // allow for user input
 
+const perfFrame = document.getElementById("performance-display");
+const perfDisplay = new PerformanceDisplay(perfFrame, perfStats); // display user performance
+perfStats.addListener(() => perfDisplay.display()); // update performance display when performance changes
+
 // Allows for use on onclick in HTML elements
 window.startGame = startGame;
 window.changeMap = changeMap;
@@ -145,3 +150,4 @@ window.changeMap = changeMap;
 // i.e. `getGame().debug = true;`
 window.getGame = () => { return game; }
 window.getSettings = () => { return settings; }
+window.getPerformance = () => { return perfStats; }

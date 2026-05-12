@@ -206,3 +206,94 @@ export class SettingsInput {
         this.element.appendChild(container);
     }
 }
+
+export class UserPerformance {
+    constructor() {
+        const saved = localStorage.getItem("performance") || "{}"
+        this.data = JSON.parse(saved);
+        this.listeners = [];
+    }
+
+    updatePerformance(endData) {
+        const now = new Date().getTime();
+
+        if (!this.data.highestCombo || endData.highestCombo > this.data.highestCombo) {
+            this.data.highestCombo = endData.highestCombo;
+            this.data.highestComboUpdated = now;
+        }
+
+        if (!this.data.mostTargetsHit || endData.targetsHit > this.data.mostTargetsHit) {
+            this.data.mostTargetsHit = endData.targetsHit;
+            this.data.mostTargetsHitUpdated = now;
+        }
+        
+        if (!this.data.longestTimeSurvived || endData.timeSurvived > this.data.longestTimeSurvived) {
+            this.data.longestTimeSurvived = endData.timeSurvived;
+            this.data.longestTimeSurvivedUpdated = now;
+        }
+
+        if (!this.data.totalTargetsHit) {
+            this.data.totalTargetsHit = 0;
+        }
+
+        this.data.totalTargetsHit += endData.targetsHit;
+        this.data.totalTargetsHitUpdated = now;
+
+        this.data.lastUpdated = now;
+
+        localStorage.setItem("performance", JSON.stringify(this.data));
+        this.notify();
+    }
+
+    addListener(listener) {
+        this.listeners.push(listener);
+    }
+
+    notify() {
+        this.listeners.forEach((listener) => listener());
+    }
+
+    export() {
+        const blob = new Blob([JSON.stringify(this.data)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = `performance_${new Date().toLocaleDateString()}.json`;
+        document.body.appendChild(anchor);
+        
+        anchor.click();
+        anchor.remove();
+    }
+}
+
+export class PerformanceDisplay {
+    constructor(element, performance) {
+        this.element = element;
+        this.performance = performance;
+        this.display();
+
+        this.exportButton = document.createElement("button");
+        this.exportButton.classList.add("difficulty-button")
+        this.exportButton.type = "button"
+        this.exportButton.onclick = () => this.performance.export();
+        this.exportButton.textContent = "EXPORT PERFORMANCE";
+        this.element.appendChild(this.exportButton);
+    }
+    
+    display() {
+        const data = this.performance.data;
+        if (!data.lastUpdated) {
+            this.element.textContent = "No games played yet.";
+            return;
+        }
+
+        // Each stat shows the value and last updated time on hover (in local time)
+        this.element.innerHTML = `
+            <p title="Last Updated: ${new Date(data.highestComboUpdated).toLocaleString()}">Highest Combo: ${data.highestCombo}</p>
+            <p title="Last Updated: ${new Date(data.mostTargetsHitUpdated).toLocaleString()}">Most Targets Hit: ${data.mostTargetsHit}</p>
+            <p title="Last Updated: ${new Date(data.longestTimeSurvivedUpdated).toLocaleString()}">Longest Time Survived: ${Math.round(data.longestTimeSurvived * 100) / 100} seconds</p>
+            <p title="Last Updated: ${new Date(data.totalTargetsHitUpdated).toLocaleString()}">Total Targets Hit: ${data.totalTargetsHit}</p>
+        `;
+    }
+}

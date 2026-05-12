@@ -10,7 +10,7 @@ import { LyricHandler, LyricLabel } from "./music.js";
 import { UserSettings } from "./userdata.js";
 
 export class Game {
-    constructor(settings, endCallback, debug) {
+    constructor(settings, perfStats, endCallback, debug) {
         this.debug = debug
         this.active = false;
         this.endFlag = false;
@@ -33,6 +33,7 @@ export class Game {
         this.currentLevel = undefined;
         this.difficulty = "hard";
         this.userSettings = settings;
+        this.performance = perfStats;
 
         this.lastUpdate = performance.now();
         this.mouseDown = false;
@@ -99,9 +100,7 @@ export class Game {
         label.textAlign = "right";
         label.position = new Vector2(1920 - 96, 128);
         this.addUiElement(label);
-
-
-                
+        this.levelStarted = performance.now();
     }
 
     showGameUI() {
@@ -174,15 +173,19 @@ export class Game {
     }
 
     userDied() {
-        const stats = {
-            Hits: this.targetsHit,
-            Whiffs: this.whiffs,
-            Misses: this.escaped,
-            HighestCombo: this.highestCombo
+        const endData = {
+            targetsHit: this.targetsHit,
+            whiffs: this.whiffs,
+            escaped: this.escaped,
+            highestCombo: this.highestCombo,
+            timeSurvived: (performance.now() - this.levelStarted) / 1000
         }
+
+        this.performance.updatePerformance(endData);
 
         // We need to display these stats to the user.
         // And then, after a few seconds, kill the game
+        this.displayEndScreen(endData);
         this.endFlag = true;
 
     }
@@ -346,6 +349,36 @@ export class Game {
 
         this.lastUpdate = performance.now();
         requestAnimationFrame((n) => {this.gameLoop(n)});
+    }
+
+    displayEndScreen(endData) {
+        // Game Over!
+        // You hit X targets
+        // You had the highest combo of Y
+        // You whiffed Z times!
+        // Newlines require new elements per line
+      
+        const lines = [
+            "Game Over!",
+            "-----------------",
+            `You hit ${endData.targetsHit} targets.`,
+            `Your highest combo was ${endData.highestCombo}.`,
+            `You whiffed ${endData.whiffs} times!`,
+            `You missed ${endData.escaped} targets!`
+        ]
+        
+        let delay = 0;
+        lines.forEach((line) => {
+            const label = new FadeTextLabel();
+            label.persistLength = 4;
+            label.text = line;
+            label.fontColour = "#F00"
+            label.textAlign = "center";
+            label.position = new Vector2(1920 / 2, 300 + delay);
+            this.addUiElement(label);
+            delay += 64;
+        });
+
     }
 
     stop() {
